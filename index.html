@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pre-Publish Review — SEO Gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --paper: #ffffff;
+    --ink: #0a0a0a;
+    --ink-soft: #2a2a2a;
+    --muted: #8a8a85;
+    --line: #e8e6df;
+    --line-soft: #f1efe9;
+    --ok: #1f6f3e;
+    --ok-bg: #ecf3ee;
+    --warn: #8a6d1f;
+    --warn-bg: #f5f0e0;
+    --err: #8a2a1f;
+    --err-bg: #f5e8e5;
+    --shadow: 0 1px 0 rgba(0,0,0,0.04), 0 24px 80px -32px rgba(0,0,0,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter Tight', -apple-system, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(0,0,0,0.015) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0,0,0,0.015) 0%, transparent 50%);
+    padding: 48px 24px;
+  }
+
+  .frame {
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  header {
+    padding: 36px 56px 32px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+  }
+
+  .header-left .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .eyebrow-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ok); display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .header-left h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .header-left h1 em {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .header-left .post-title {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .header-left .post-title span {
+    color: var(--ink-soft);
+  }
+
+  .header-right {
+    text-align: right;
+    min-width: 220px;
+  }
+
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .score {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-total {
+    font-size: 18px;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+
+  .score-bar {
+    margin-top: 12px;
+    height: 1px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .autorun-banner {
+    padding: 14px 56px;
+    background: var(--line-soft);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+  }
+
+  .autorun-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .autorun-status { color: var(--muted); }
+
+  .rerun-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    border-radius: 2px;
+    transition: all 0.18s ease;
+  }
+
+  .rerun-btn:hover { border-color: var(--ink); background: var(--paper); }
+
+  .sections { padding: 16px 0 0; }
+
+  .section {
+    padding: 24px 56px 28px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .section-meta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .item {
+    border-top: 1px solid var(--line-soft);
+    padding: 14px 0;
+    transition: background 0.15s ease;
+    position: relative;
+  }
+
+  .item:first-of-type { border-top: none; padding-top: 4px; }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .indicator {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .indicator.manual { cursor: pointer; }
+  .indicator.manual:hover { border-color: var(--ink-soft); }
+
+  .indicator.checked {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .indicator.checked::after {
+    content: '';
+    width: 9px;
+    height: 5px;
+    border-left: 1.5px solid var(--paper);
+    border-bottom: 1.5px solid var(--paper);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .indicator.running { border-color: var(--line); background: var(--paper); }
+  .indicator.running::after {
+    content: '';
+    width: 10px; height: 10px;
+    border: 1.5px solid var(--line);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .indicator.passed {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .indicator.passed::after {
+    content: '';
+    width: 9px; height: 5px;
+    border-left: 1.5px solid var(--paper);
+    border-bottom: 1.5px solid var(--paper);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .indicator.failed {
+    background: var(--err-bg);
+    border-color: var(--err);
+  }
+  .indicator.failed::after {
+    content: '!';
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--err);
+    line-height: 1;
+  }
+
+  .item-main { min-width: 0; }
+
+  .item-title {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    margin-bottom: 2px;
+  }
+
+  .item-summary {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .item-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 2px;
+    background: var(--line-soft);
+    color: var(--muted);
+  }
+
+  .pill.critical { background: #2a2a2a; color: var(--paper); }
+  .pill.manual { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  .pill.result-pass { background: var(--ok-bg); color: var(--ok); }
+  .pill.result-fail { background: var(--err-bg); color: var(--err); }
+  .pill.result-running { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+
+  .chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--muted);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .item.open .chevron { transform: rotate(90deg); }
+
+  .detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .item.open .detail { max-height: 1200px; }
+
+  .detail-inner {
+    padding: 18px 0 8px 42px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .detail-block {
+    border-left: 1px solid var(--line);
+    padding-left: 18px;
+  }
+
+  .detail-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .detail-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  .detail-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: var(--line-soft);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--ink);
+  }
+
+  .detail-text strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .result-box {
+    margin-top: 4px;
+    padding: 10px 12px;
+    background: var(--line-soft);
+    border-left: 2px solid var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .result-box.pass { background: var(--ok-bg); border-left-color: var(--ok); color: var(--ok); }
+  .result-box.fail { background: var(--err-bg); border-left-color: var(--err); color: var(--err); }
+
+  footer {
+    padding: 28px 56px 36px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.015));
+    border-top: 1px solid var(--line);
+  }
+
+  .footer-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .footer-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.3s ease;
+  }
+
+  .footer-status.ready .dot { background: var(--ok); }
+  .footer-status.ready { color: var(--ok); }
+  .footer-status.blocked .dot { background: var(--err); }
+  .footer-status.blocked { color: var(--err); }
+
+  .footer-actions {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .btn {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 14px 28px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    min-width: 140px;
+  }
+
+  .btn:hover { border-color: var(--ink); }
+
+  .btn-save { flex: 0 1 auto; }
+
+  .btn-publish {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-publish.disabled {
+    background: var(--line-soft);
+    color: var(--muted);
+    border-color: var(--line);
+    cursor: not-allowed;
+  }
+
+  .btn-publish.disabled:hover { border-color: var(--line); }
+  .btn-publish:not(.disabled):hover { background: #000; }
+
+  .btn-publish-arrow {
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-publish:not(.disabled):hover .btn-publish-arrow {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 720px) {
+    body { padding: 16px 12px; }
+    header { padding: 28px 24px 24px; flex-direction: column; align-items: flex-start; }
+    .header-right { text-align: left; width: 100%; }
+    .autorun-banner { padding: 12px 24px; flex-wrap: wrap; }
+    .section { padding: 20px 24px 24px; }
+    footer { padding: 24px; }
+    .header-left h1 { font-size: 28px; }
+    .score { font-size: 44px; }
+    .detail-inner { padding-left: 0; }
+    .footer-actions { flex-direction: column; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <header>
+    <div class="header-left">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        Pre-Publish Review · SEO Gate
+      </div>
+      <h1>Before this goes <em>live</em>.</h1>
+      <div class="post-title">post: <span id="post-title-display">Budget 2026 — टैक्स स्लैब में बड़ा बदलाव, जानें किसे फायदा</span></div>
+    </div>
+    <div class="header-right">
+      <div class="score-label">Readiness</div>
+      <div class="score">
+        <span id="score-num">0</span><span class="score-total">/<span id="score-total">0</span></span>
+      </div>
+      <div class="score-bar"><div class="score-bar-fill" id="score-bar"></div></div>
+    </div>
+  </header>
+
+  <div class="autorun-banner">
+    <div class="autorun-left">
+      <span class="autorun-status" id="autorun-status">Running automated checks…</span>
+    </div>
+    <button class="rerun-btn" id="rerun-btn">↻ Re-run auto checks</button>
+  </div>
+
+  <div class="sections" id="sections"></div>
+
+  <footer>
+    <div class="footer-status" id="footer-status">
+      <span class="dot"></span>
+      <span id="status-text">Running checks…</span>
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-save" id="btn-save">Save as draft</button>
+      <button class="btn btn-publish disabled" id="btn-publish">
+        <span class="btn-publish-arrow">↑</span>Publish
+      </button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const checklist = [
+  {
+    section: "Content Integrity",
+    items: [
+      {
+        id: "word-count",
+        title: "Word count meets minimum threshold",
+        summary: "Article body has at least 350 words across 3+ paragraphs.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "412 words across 5 paragraphs — passed." },
+        what: "Confirms the post contains a substantive body — at minimum 350 words distributed across three or more paragraphs.",
+        why: "Thin pages compete poorly in news ranking and are routinely excluded from Google Discover. Below this floor, the page is flagged as low-value and pushed down.",
+        how: "If under threshold, expand context, background, related developments, or quotes. Avoid padding — add information the reader cannot already get from the headline."
+      },
+      {
+        id: "title-meta",
+        title: "Title & meta — full names, keywords, English prefix",
+        summary: "SEO title and meta description filled, with full names and primary keyword present.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "Title 58c · Meta 152c · Primary keyword present · English prefix detected." },
+        what: "SEO Title (50–60 characters) and Meta Description (140–160 characters) must both exist. Both must contain the primary keyword, use <strong>full names</strong> (not first names alone, not initials), and carry the agreed English keyword prefix used for news indexing on non-English pages.",
+        why: "These are the click decision in the SERP. Full names match how readers search; partial names fail. The English keyword prefix is what makes regional-language articles discoverable by mixed-script queries. A missing or truncated meta lets Google rewrite it, often poorly.",
+        how: "Front-load the keyword. Spell out names completely on first reference in the title. Use the English prefix exactly as documented in the SEO playbook — do not translate it. Avoid duplicating the H1 verbatim."
+      },
+      {
+        id: "heading-structure",
+        title: "Heading hierarchy is valid (H1 → H2 → H3)",
+        summary: "Exactly one H1, H2s precede H3s, no skipped levels.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "1 H1 · 4 H2 · 2 H3 · hierarchy clean." },
+        what: "The post must contain exactly one H1 (usually the post title), with H2s and H3s used in correct hierarchical order without skipping levels.",
+        why: "Heading structure is how crawlers and screen readers parse meaning. Multiple H1s confuse intent; skipped levels (H1 → H4) signal poor semantic structure and weaken keyword association.",
+        how: "Use H2 for major sections, H3 only nested inside an H2. Never bold a paragraph and call it a heading — use real heading tags."
+      },
+      {
+        id: "alt-text",
+        title: "All images have descriptive ALT text",
+        summary: "Every image has non-empty, descriptive alt attribute.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: false, message: "2 of 5 images missing alt text. Featured image alt present." },
+        what: "Every image in the post body and the featured image must carry an alt attribute that describes what is in the image — not the file name, not keyword stuffing.",
+        why: "ALT text is read by accessibility tools and parsed by image search. Missing alt is now a mandatory-fail at our publishing standard. It also feeds Google Discover image selection.",
+        how: "Describe what someone who cannot see the image would need to know: subject, action, context. For people, name them. For charts, summarise the takeaway."
+      },
+      {
+        id: "click-bait",
+        title: "Title is not click-bait",
+        summary: "Headline delivers what it promises, no shock words or curiosity-gap fishing.",
+        critical: true,
+        type: "manual",
+        what: "Title accurately summarises the article. No 'You won't believe', 'SHOCKING', vague pronouns ('THIS happened…'), or curiosity-gap question marks where the article does not in fact answer the question. The article body must deliver, within the first two paragraphs, exactly what the headline promised.",
+        why: "Google's site-quality systems explicitly down-rank click-bait at the domain level. One viral click-bait win is not worth the long-tail penalty to every other URL on the site. Repeated click-bait is also tracked by Google Discover and removes the entire site from the feed.",
+        how: "Read the title and the lead. If the lead does not directly satisfy the headline's promise within two sentences, rewrite one of them. When in doubt, ask: would I feel cheated reading this if I clicked on that headline?"
+      }
+    ]
+  },
+  {
+    section: "On-Page SEO",
+    items: [
+      {
+        id: "slug-url",
+        title: "URL slug is clean and locked",
+        summary: "English slug, hyphenated, no transliteration, will not change post-publish.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "Slug: top-10-election-highlights · English · 38 chars." },
+        what: "URL slug is in English (translated/transliterated URLs are blocked), uses hyphens, contains the primary keyword, and is final — the slug must not change after publishing.",
+        why: "URL changes post-publish kill social shares, break backlinks, and force Google to re-process the page. Translated slugs degrade indexing in non-Latin scripts.",
+        how: "Decide the slug before hitting publish. Keep it under ~75 characters. Strip stop words (the, a, of) where it stays readable."
+      },
+      {
+        id: "canonical",
+        title: "Canonical tag points to the correct URL",
+        summary: "Self-canonical on the live URL, AMP and non-AMP cross-referenced.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "Self-canonical set · AMP ↔ non-AMP pair valid." },
+        what: "The post sets a self-referencing canonical to its own final URL. If an AMP version exists, the AMP page declares rel=canonical to the non-AMP, and the non-AMP declares rel=amphtml to the AMP.",
+        why: "Incorrect canonicals are the single most common cause of pages dropping from the index. A canonical pointing elsewhere tells Google to ignore this page entirely.",
+        how: "Leave the canonical field blank to let WordPress auto-set the self-canonical. Only override if this article genuinely is a syndicated copy of another source."
+      },
+      {
+        id: "internal-links",
+        title: "Internal links to relevant existing posts",
+        summary: "At least 2 contextual internal links to related articles on the site.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "3 internal links detected · all dofollow · anchors descriptive." },
+        what: "The article body links to two or more relevant existing posts on the site, placed naturally inside body copy (not in a 'Related' widget).",
+        why: "Internal links pass authority, help Google discover and re-crawl older pages, and increase session depth. New articles starved of internal links struggle to get indexed quickly.",
+        how: "Link the first mention of a person, event, or topic to the canonical article on that topic. Use descriptive anchor text — never 'click here' or 'read more'."
+      },
+      {
+        id: "external-links",
+        title: "External links carry correct rel attributes",
+        summary: "Outbound links: rel=noopener, sponsored / ugc tagged where needed.",
+        critical: false,
+        type: "auto",
+        autoResult: { pass: true, message: "4 external links · rel=noopener on all · 0 sponsored, 0 ugc detected." },
+        what: "Every external link has target=_blank plus rel=noopener. Any paid, sponsored, or affiliate link is marked rel=sponsored. Any user-submitted link is marked rel=ugc.",
+        why: "Unmarked sponsored links violate Google's spam policy and risk a manual action. rel=noopener is also a basic security requirement to prevent tab-hijacking.",
+        how: "Use the link block's attributes panel. When in doubt about a link being sponsored, ask editorial — getting this wrong is a domain-level risk."
+      },
+      {
+        id: "schema",
+        title: "Article schema (NewsArticle JSON-LD) is valid",
+        summary: "NewsArticle schema with headline, dates, author, publisher, 1200px+ image.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "NewsArticle schema valid · all required fields present · image 1600×900." },
+        what: "The page outputs a <strong>NewsArticle</strong> (or Article) JSON-LD block including <code>headline</code>, <code>datePublished</code>, <code>dateModified</code>, <code>author</code> (with profile URL), <code>publisher</code> (with logo), and a primary <code>image</code> at least 1200px wide.",
+        why: "Schema is what makes the article eligible for Top Stories, Discover carousels, and rich result presentation. A failed schema means a regular blue link instead of a visual placement — and for news, that is the difference between thousands of impressions and almost none.",
+        how: "Use the schema validator preview shown below. If a field is red, the most common cause is a missing author profile URL or an image below 1200px wide. Fix at source — never hand-edit the JSON-LD."
+      }
+    ]
+  },
+  {
+    section: "Media, Embeds & Performance",
+    items: [
+      {
+        id: "featured-image",
+        title: "Featured image is 1200px+ and optimised",
+        summary: "Min 1200px wide, under ~200KB, WebP preferred, 16:9 ratio.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "1600×900 · 142KB · WebP · 16:9 ratio." },
+        what: "Featured image is at least 1200 pixels wide on its long edge, served as WebP where supported, file size under approximately 200KB, in 16:9 or 1.91:1 aspect ratio.",
+        why: "Below 1200px disqualifies the article from Google Discover image placement entirely. Oversized files inflate LCP, the metric Google watches most closely for ranking.",
+        how: "Resize before upload — do not rely on WordPress responsive sizes alone. Run heavy images through compression. Reject screenshots saved at retina-2x without resizing."
+      },
+      {
+        id: "image-quality",
+        title: "No blurry, low-resolution or stock-cliché images",
+        summary: "All body images are sharp, original where possible, contextually relevant.",
+        critical: false,
+        type: "manual",
+        what: "Inline body images are visibly sharp, not upscaled from low-res sources, and directly relevant to the paragraph they sit beside. No generic stock photography where original visuals exist.",
+        why: "Image quality is now a quality signal Google reads via its vision models. Blurred or off-topic images correlate with thin content and drag down the page's ranking signal.",
+        how: "If the only available image is poor quality, prefer fewer images over bad ones. Caption every image with context the alt text does not already cover."
+      },
+      {
+        id: "lcp-preview",
+        title: "Largest Contentful Paint preview is under 2.5s",
+        summary: "Simulated LCP for this post passes on mobile.",
+        critical: false,
+        type: "auto",
+        autoResult: { pass: true, message: "LCP ≈ 1.9s (mobile, 4G throttled) · within target." },
+        what: "A pre-publish lighthouse-style simulation estimates the LCP of the rendered article on a throttled mobile profile. Pass threshold is 2.5 seconds.",
+        why: "LCP is one of three Core Web Vitals directly used in ranking. The biggest single cause of LCP failure on news articles is an oversized hero image.",
+        how: "If LCP fails: reduce featured image size, remove auto-playing video above the fold, or defer any third-party embed (Twitter, Instagram) that loads above the first paragraph."
+      },
+      {
+        id: "embeds",
+        title: "Rich embeds — aim for 2 to 5 per story",
+        summary: "Multiple video / tweet / Instagram / chart embeds. More is better.",
+        critical: false,
+        type: "auto",
+        autoResult: { pass: false, message: "1 embed detected (1 tweet). Target is 2–5. Consider adding video or related social posts." },
+        what: "The article includes multiple rich embeds — tweets, YouTube/native videos, Instagram posts, charts, or quote blocks. <strong>Target is 2 to 5 embeds per major story.</strong> One is the minimum; higher counts (3, 4, 5) consistently outperform.",
+        why: "Rich embeds increase dwell time, give Google additional crawlable signals, qualify the page for video-rich result types, and dramatically improve social shareability. Articles with multiple embeds get longer average session duration, which feeds back into ranking.",
+        how: "Embed natively (paste the URL on its own line in Gutenberg) rather than iframing. Native embeds load lazily and don't block render. For breaking stories, the source tweet + a video clip + a reaction tweet is a strong default pattern."
+      }
+    ]
+  },
+  {
+    section: "Editorial Strategy",
+    items: [
+      {
+        id: "cluster-coverage",
+        title: "Cluster coverage — covers the trending angle",
+        summary: "Article fits an active topic cluster; trending sub-angles suggested for follow-up.",
+        critical: false,
+        type: "auto",
+        autoResult: { pass: true, message: "Matched cluster: General Election 2026 · 3 trending sub-angles suggested for follow-ups." },
+        what: "The article is mapped to an active topic cluster on the site, and the system surfaces 2–3 related trending sub-angles that the desk has not yet covered. The author confirms the chosen angle is fresh within the cluster (not a duplicate of a sibling article).",
+        why: "Cluster coverage is what wins Top Stories. Google ranks sites that demonstrate sustained, multi-angle coverage of a topic above those that publish one-off pieces. Missing the trending sub-angle of a story is the single biggest avoidable traffic loss in news SEO.",
+        how: "Review the suggested trending angles below. If one is more relevant than the current article's angle, refocus the headline and lead. If the current angle is right, log the suggestions for the desk's next piece."
+      },
+      {
+        id: "competition-gap",
+        title: "Competition gap — stories competitors covered, we did not",
+        summary: "Surfaces top stories ranking from competitor domains on this topic in the last 24h.",
+        critical: false,
+        type: "auto",
+        autoResult: { pass: true, message: "4 competitor stories on adjacent topics surfaced · 2 flagged as missed angles for editorial review." },
+        what: "A scan of competing domains in the same niche surfaces stories that are ranking well and that we have not yet covered. The author reviews whether any of those stories should be commissioned as separate articles or folded into this piece.",
+        why: "Sites that consistently cover what their competitors cover (plus their own original angles) win the share-of-voice fight on news topics. Missing what competitors are publishing on means missing the cluster, missing Top Stories, and ceding the search result page.",
+        how: "Review the surfaced stories. Tag any genuinely missed angles to the editorial backlog before publishing this piece. Do not block this article on competitor coverage unless this article duplicates one of them."
+      }
+    ]
+  },
+  {
+    section: "Indexability & Freshness",
+    items: [
+      {
+        id: "noindex",
+        title: "Article is set to index, follow",
+        summary: "No accidental noindex / nofollow on this post.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "Robots meta: index, follow · visibility: public." },
+        what: "The post is not marked noindex. Robots meta is index, follow. The post is not in a category that has been blocked at template level.",
+        why: "A single misconfigured Yoast / Rank Math toggle removes the article from Google entirely. This is the most expensive silent failure in publishing.",
+        how: "Confirm the visibility toggle is Public and the SEO plugin's index toggle is on. If publishing into a normally-noindexed category, double-check the override."
+      },
+      {
+        id: "publish-date",
+        title: "Publish date and modified date are correct",
+        summary: "datePublished matches now, dateModified updates on edits.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "datePublished: now (IST) · dateModified: auto-tracking enabled." },
+        what: "datePublished is set to the actual current publish moment in IST, not backdated. dateModified is wired to update automatically on any future edit.",
+        why: "News ranking is extremely time-sensitive. A backdated article will never enter Top Stories. A frozen dateModified prevents Google from recognising updates.",
+        how: "Do not manually edit the publish date unless this is a genuine repost of older content. For breaking updates, let the modified date roll naturally."
+      },
+      {
+        id: "category-tags",
+        title: "Category and tags are assigned",
+        summary: "One primary category, 3–8 relevant tags, no over-tagging.",
+        critical: false,
+        type: "auto",
+        autoResult: { pass: true, message: "1 primary category · 5 tags · all from existing taxonomy." },
+        what: "Post is assigned to one clear primary category. Tags number between three and eight, are reused from the existing tag taxonomy where possible, and describe entities (people, places, events) — not adjectives.",
+        why: "Categories and tags shape internal-link archives that Google crawls heavily. Over-tagging fragments these archives into thin pages and triggers index bloat.",
+        how: "Prefer existing tags. Create a new tag only for a new named entity. Never tag with adjectives like 'amazing' or 'latest'."
+      },
+      {
+        id: "duplicate-check",
+        title: "No duplicate content with existing posts",
+        summary: "Headline and lead do not closely match a previously published article.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "Highest similarity score: 31% (well below 85% threshold)." },
+        what: "A similarity scan against the last 90 days of published articles flags any post whose headline or opening paragraph is more than 85% similar to an existing one.",
+        why: "Near-duplicate posts cannibalise each other's rankings — neither wins, both lose. For news stories, this also risks Google de-duplicating both from Top Stories.",
+        how: "If a duplicate is flagged, decide: update the existing article instead, or substantially rewrite the angle, headline, and lead before publishing."
+      }
+    ]
+  },
+  {
+    section: "Editorial Craft",
+    items: [
+      {
+        id: "headline-craft",
+        title: "Headline is tight, cased correctly, with a hook",
+        summary: "No redundant words, no all-lowercase, top keyword leads, emotional hook for social.",
+        critical: true,
+        type: "manual",
+        what: "The headline carries the single most important high-traffic keyword at or near the front. It contains no redundant phrasing — if the headline already says 'दुल्हन बनीं', it should not also say 'रचाया ब्याह'. No word is set in all-lowercase. The on-site SEO headline is short and crisp; the social-share headline carries an emotional hook.",
+        why: "Redundant words dilute the keyword density and waste the limited character budget Google shows in the SERP. All-lowercase words read as careless and hurt brand perception in Discover. A flat headline with no hook gets near-zero social pickup even when the SEO headline ranks.",
+        how: "Read the headline aloud. Cut any word that repeats an idea already present. Capitalise correctly. Then ask: would I tap this if it appeared in my WhatsApp feed? If not, sharpen the hook without making it click-bait."
+      },
+      {
+        id: "headline-intro-match",
+        title: "Headline angle is justified in the intro",
+        summary: "The promise/angle in the headline is delivered inside the first paragraph.",
+        critical: true,
+        type: "manual",
+        what: "Whatever angle or claim the headline takes must be substantiated within the intro paragraph itself — not three paragraphs down. If a live blog headline was changed mid-update, the intro must be rewritten to match the new headline.",
+        why: "Readers (and Google's quality systems) judge whether the page delivered on its headline within the first screen. A mismatch is read as click-bait even when the headline is technically accurate, and triggers fast bounce-backs to the SERP.",
+        how: "After finalising the headline, re-read only the intro. If the headline's core promise isn't clearly answered there, edit the intro — not the headline. For updated live blogs, treat the intro rewrite as mandatory, not optional."
+      },
+      {
+        id: "intro-discipline",
+        title: "Intro is 70–100 words and starts with new information",
+        summary: "Opens with the news itself, not background; trending keywords + English in brackets.",
+        critical: true,
+        type: "manual",
+        what: "The first paragraph is between 70 and 100 words. It opens with the actual news — what happened — not with essay-style background or scene-setting. All trending/related keywords appear here, with the English form added in brackets where useful, e.g. (Budget 2026).",
+        why: "Google weights the opening paragraph heavily for topical relevance, and readers decide within seconds whether to stay. A background-first intro buries the news and the keywords, costing both ranking and retention.",
+        how: "Put the single most newsworthy fact in the first sentence. Move any context to the second or third paragraph. Add the English keyword in brackets the first time the topic is named — once is enough."
+      },
+      {
+        id: "paragraph-rhythm",
+        title: "Paragraph rhythm and logical flow",
+        summary: "Each paragraph ~70–75 words and logically connected to the one above it.",
+        critical: false,
+        type: "manual",
+        what: "Every body paragraph is roughly 70–75 words — not one-line fragments, not 200-word walls. Each paragraph follows logically from the one before it, so the story reads as a connected narrative rather than disconnected blocks.",
+        why: "Even-length, connected paragraphs improve readability scores and dwell time, and make the article render cleanly on mobile and AMP. Erratic paragraph lengths correlate with thin or padded content in quality assessment.",
+        how: "Scan the article in the preview at mobile width. Any paragraph that is a single short line or an unbroken block should be merged or split. Check that each paragraph's first sentence connects to the previous paragraph's idea."
+      },
+      {
+        id: "excerpt-original",
+        title: "Excerpt is original, not copied from the body",
+        summary: "2–3 fresh lines; covers keywords the headline couldn't; creates curiosity.",
+        critical: true,
+        type: "manual",
+        what: "The excerpt / meta description is 2–3 sentences written separately — no sentence is copy-pasted from the article body. It covers the important keywords that could not fit in the headline, and it leaves the reader wanting to read on.",
+        why: "A meta description that duplicates the body wastes the one piece of SERP copy you fully control and gives Google a reason to auto-rewrite it. A distinct, curiosity-driven excerpt directly lifts click-through rate from search and social.",
+        how: "Write the excerpt last, after the body is final, with the body hidden. If any sentence in it also appears verbatim in the article, rewrite that sentence. End on an open loop, not a full summary."
+      }
+    ]
+  },
+  {
+    section: "Originality & Content Quality",
+    items: [
+      {
+        id: "no-copy-paste",
+        title: "No copy-paste — including from our own site",
+        summary: "Body is original; old material rewritten; background limited to 1–2 lines.",
+        critical: true,
+        type: "manual",
+        what: "No part of the body is copy-pasted from any source, including our own previously published articles. Old-story material used for background is rewritten and limited to a maximum of one or two lines, not lifted verbatim.",
+        why: "Self-duplication splits ranking signals between the old and new URL so neither performs. External copy-paste risks duplicate-content suppression and, for some sources, legal exposure. Original phrasing is also a direct quality signal Google now evaluates.",
+        how: "If you need background from an old piece, close it and write the one or two lines from memory in your own words. When in doubt, run the body through the duplicate scan before publishing."
+      },
+      {
+        id: "translation-quality",
+        title: "Translation is human, not raw machine output",
+        summary: "No full Google Translate; meaning-based, written for the Hindi reader's angle.",
+        critical: true,
+        type: "manual",
+        what: "When the story is built from an English report, it is not run wholesale through Google Translate. The translation is meaning-based (भावानुवाद), in your own words, written from the Hindi reader's angle after reading the full source first. Hindi sites are not used as the source/reference link.",
+        why: "Raw machine translation reads unnaturally, fails readability checks, and is increasingly detectable as low-effort content. Writing for the local reader's angle is what differentiates the story from every other site running the same wire copy.",
+        how: "Read the entire English source before writing a word. Then write the story as if explaining it to a Hindi reader, not translating it line by line. Cite the original English/primary source, never a Hindi aggregator."
+      },
+      {
+        id: "claims-verified",
+        title: "No unverified claims or superstition in sensitive topics",
+        summary: "Health / Religion / Lifestyle claims are verified; no superstition presented as fact.",
+        critical: true,
+        type: "manual",
+        what: "In Health, Religion, and Lifestyle stories, there is no unverified claim or superstition presented as fact. Any health or remedy claim is attributed to a credible authority, not stated in the publication's own voice.",
+        why: "These are YMYL (Your Money or Your Life) categories where Google applies the strictest quality scrutiny. Unverified claims here can suppress the entire category's rankings and create real-world harm and liability.",
+        how: "For any factual or health claim, ask 'who said this and can I link it?'. If you cannot attribute it to a credible source, either cut it or frame it explicitly as a belief/claim, not as established fact."
+      },
+      {
+        id: "social-comment-sourcing",
+        title: "Social-comment sourcing is clean",
+        summary: "No abusive/personal comments; 1–2 comments not made the headline; verified handles only.",
+        critical: false,
+        type: "manual",
+        what: "For social-post-based stories: one or two random comments are not turned into the main headline angle. Abusive, trivial, or personal-attack comments are not used. Any comment quoted is from a verified or genuine influencer handle.",
+        why: "Building a headline on a couple of unverified comments produces fragile, low-trust content that ages badly and invites complaints. Quoting abusive or fake-handle comments damages credibility and can amplify harassment.",
+        how: "If the story rests on social reaction, ensure the headline reflects the broader reaction, not one comment. Screenshot only verified handles. Drop anything abusive or personal entirely."
+      },
+      {
+        id: "photo-selection",
+        title: "Photo is fresh, relevant and rights-clear",
+        summary: "Latest photo, story-relevant (not symbolic), unique per story, credit/rights clear.",
+        critical: true,
+        type: "manual",
+        what: "The image is the latest available (a file photo only if there is genuinely no option). It is visually relevant to the story — not a generic building, logo, or symbolic image. If multiple stories share a topic, each uses a different photo. Copyright is clear; no one's exclusive photo is lifted from social; a celebrity's social photo has their handle credited.",
+        why: "The featured image drives Google Discover placement and social CTR more than almost any other element. A symbolic or recycled image kills tap-through, and lifting exclusive/social images creates copyright exposure.",
+        how: "Prefer a fresh, on-topic image even if it takes longer to source. If reusing a topic photo, change it for this story. For any social/celebrity image, add the handle in the credit before publishing."
+      },
+      {
+        id: "image-filename-caption",
+        title: "Image filename and caption are correct",
+        summary: "Descriptive filename (not 1.jpg); caption = Keyword → Description → Source; alt + caption both filled.",
+        critical: false,
+        type: "manual",
+        what: "The image file is named after the story / person / event — not 'image.jpg' or '1.jpg'. The caption follows the format Keyword → Photo description → Source. Both the caption and the alt text are filled in the CMS, and the caption is not copy-pasted into the alt text.",
+        why: "Descriptive filenames are a real image-search ranking factor. A structured caption improves context for both readers and Google's image understanding. Duplicating caption into alt text wastes the distinct signal alt text is meant to provide.",
+        how: "Rename the file before upload. Write the caption as keyword-first, then describe, then credit the source. Write alt text separately, focused on describing the image for someone who cannot see it."
+      },
+      {
+        id: "embed-placement",
+        title: "Embeds are placed and framed correctly",
+        summary: "Video not before 3rd paragraph, H2 subhead before it; tweets only if they add value.",
+        critical: false,
+        type: "manual",
+        what: "Any video embed appears no earlier than the third paragraph and is preceded by an H2-format subhead. A tweet is embedded only when it carries actual audio/video/photo value; a controversial tweet is screenshotted, not live-embedded.",
+        why: "An embed above the third paragraph pushes the news down and hurts LCP and reading flow. A live-embedded controversial tweet can be deleted at any time, breaking the story and leaving a blank — a screenshot is permanent and safe.",
+        how: "Move any early embed below the third paragraph and add an H2 subhead above it. Before embedding a tweet, ask whether it adds media value; if it is merely text or controversial, screenshot it instead."
+      },
+      {
+        id: "credit-attribution",
+        title: "Credits and contributor attribution are complete",
+        summary: "Agency/exclusive-source input credited; all contributing reporters named.",
+        critical: false,
+        type: "manual",
+        what: "If agency input is used, the agency is credited and the copy is not 100% agency — it carries our own inputs too. If another site's exclusive was used as input, that site is credited. When multiple reporters contributed, all are named and it is clear who contributed what; for big breaking/special ground reports, the reporter's name is in the main photo.",
+        why: "Proper attribution is an E-E-A-T and trust signal and an ethical requirement. Missing agency or exclusive-source credit creates plagiarism and legal risk; unclear multi-contributor bylines weaken author authority signals.",
+        how: "Before publishing, list every source of input mentally and confirm each is credited. For multi-reporter pieces, confirm the byline names everyone. For special ground reports, add the reporter credit to the main image."
+      }
+    ]
+  },
+  {
+    section: "Final Preview",
+    items: [
+      {
+        id: "preview-readthrough",
+        title: "Full read-through done in preview",
+        summary: "Whole copy read once; spelling/grammar checked; no padding sentences.",
+        critical: true,
+        type: "manual",
+        what: "The entire article has been read once in preview — not skimmed. Spelling and grammar are checked. No sentences were added purely to hit word count. The same point is not made twice.",
+        why: "The preview read is the last line of defence against errors that automated checks cannot catch — awkward phrasing, factual slips, padding, accidental repetition. These directly affect reader trust and quality scoring.",
+        how: "Read it as a reader, not as the writer. If a sentence adds no new information, cut it. If a point is repeated, keep the stronger instance. Fix every spelling/grammar issue before continuing."
+      },
+      {
+        id: "preview-no-repeat",
+        title: "No repeated sentence across body, excerpt, meta",
+        summary: "Same sentence does not appear in body and excerpt/meta description.",
+        critical: true,
+        type: "manual",
+        what: "No identical sentence appears in more than one place — the body, the excerpt, and the meta description must not share the same sentence.",
+        why: "Repetition across these fields wastes distinct ranking and CTR signals and signals low editorial effort. The excerpt/meta exists to add information the body cannot show in the SERP.",
+        how: "Compare the excerpt/meta against the intro specifically — that is where accidental duplication happens most. Rewrite any shared sentence so each field pulls its own weight."
+      },
+      {
+        id: "preview-everything-works",
+        title: "All embeds, images and links work in preview",
+        summary: "Every embed renders, every image loads, every link resolves correctly.",
+        critical: true,
+        type: "manual",
+        what: "In the preview, every embed renders, every image loads, and every internal/external link opens the correct destination. The URL is checked one final time for any wrong or junk character.",
+        why: "A broken embed or dead link discovered after publish damages the reader experience at the worst possible moment — when traffic is highest — and a broken link wastes the internal-linking SEO value entirely.",
+        how: "Click every link in the preview. Confirm each embed actually displays (not just a blank space). Re-check the slug character by character. Only then proceed to publish."
+      }
+    ]
+  },
+  {
+    section: "Author & Trust Signals",
+    items: [
+      {
+        id: "author-byline",
+        title: "Author is assigned and has a complete profile",
+        summary: "Byline is set; author page exists with bio, photo, credentials.",
+        critical: true,
+        type: "auto",
+        autoResult: { pass: true, message: "Author profile complete · bio 78 words · photo set · 2 social links." },
+        what: "Post has a real author byline (not 'Admin' or 'Editorial Desk'). The author's profile page exists, has a bio of 50+ words, a photo, and links to professional credentials or social profiles.",
+        why: "E-E-A-T (Experience, Expertise, Authoritativeness, Trust) is read directly from author profiles. News articles without identifiable authors are systematically deprioritised, especially in YMYL categories.",
+        how: "If publishing under a desk byline, ensure that desk profile still exists with editorial standards listed. For new authors, complete the profile before first publish, not after."
+      },
+      {
+        id: "sources-citations",
+        title: "Sources are cited and linked",
+        summary: "Factual claims, statistics and quotes link to primary sources.",
+        critical: false,
+        type: "manual",
+        what: "Statistics, quotes, and factual claims either link to their primary source (government release, official statement, original report) or are attributed inline ('according to…').",
+        why: "Sourcing is a direct E-E-A-T signal. Unsourced claims in news content also expose the site to misinformation flags and reduce trust from Google's quality raters.",
+        how: "Link the first time a statistic is cited. Prefer primary sources (the press release itself) over aggregators (other news sites quoting the press release)."
+      }
+    ]
+  }
+];
+
+const sectionsEl = document.getElementById('sections');
+const state = {};
+
+checklist.forEach((section, sIdx) => {
+  const sectionDiv = document.createElement('div');
+  sectionDiv.className = 'section';
+
+  const total = section.items.length;
+  const criticalCount = section.items.filter(i => i.critical).length;
+
+  sectionDiv.innerHTML = `
+    <div class="section-header">
+      <span class="section-num">${String(sIdx + 1).padStart(2,'0')}</span>
+      <span class="section-title">${section.section}</span>
+      <span class="section-meta"><span class="section-progress" data-section="${sIdx}">0</span> / ${total} · ${criticalCount} critical</span>
+    </div>
+    <div class="section-items"></div>
+  `;
+
+  const itemsContainer = sectionDiv.querySelector('.section-items');
+
+  section.items.forEach((item) => {
+    state[item.id] = {
+      passed: false,
+      type: item.type,
+      critical: item.critical,
+      running: item.type === 'auto',
+      autoResult: item.autoResult || null
+    };
+
+    const itemEl = document.createElement('div');
+    itemEl.className = 'item';
+    itemEl.dataset.id = item.id;
+
+    const resultBox = item.type === 'auto'
+      ? `<div class="result-box ${item.autoResult.pass ? 'pass' : 'fail'}" id="result-${item.id}" style="display:none">${item.autoResult.message}</div>`
+      : '';
+
+    itemEl.innerHTML = `
+      <div class="item-row">
+        <div class="indicator ${item.type === 'manual' ? 'manual' : 'running'}" data-indicator="${item.id}"></div>
+        <div class="item-main">
+          <div class="item-title">${item.title}</div>
+          <div class="item-summary">${item.summary}</div>
+        </div>
+        <div class="item-status">
+          ${item.critical ? '<span class="pill critical">Critical</span>' : ''}
+          ${item.type === 'manual'
+            ? '<span class="pill manual">Manual</span>'
+            : `<span class="pill result-running" data-pill="${item.id}">Running</span>`}
+          <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 4 L10 8 L6 12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="detail">
+        <div class="detail-inner">
+          ${item.type === 'auto' ? `
+          <div class="detail-block">
+            <div class="detail-label">Automated check result</div>
+            <div class="detail-text">${resultBox}</div>
+          </div>` : ''}
+          <div class="detail-block">
+            <div class="detail-label">What this checks</div>
+            <div class="detail-text">${item.what}</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">Why it matters</div>
+            <div class="detail-text">${item.why}</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">How to fix / pass</div>
+            <div class="detail-text">${item.how}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    itemsContainer.appendChild(itemEl);
+
+    itemEl.querySelector('.item-row').addEventListener('click', (e) => {
+      if (e.target.closest('.indicator.manual')) return;
+      itemEl.classList.toggle('open');
+    });
+
+    const indicator = itemEl.querySelector('.indicator');
+    if (item.type === 'manual') {
+      indicator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state[item.id].passed = !state[item.id].passed;
+        indicator.classList.toggle('checked', state[item.id].passed);
+        updateScore();
+      });
+    }
+  });
+
+  sectionsEl.appendChild(sectionDiv);
+});
+
+function runAutoChecks() {
+  const autoItems = Object.entries(state).filter(([_, s]) => s.type === 'auto');
+
+  autoItems.forEach(([id, s]) => {
+    s.running = true;
+    s.passed = false;
+    const indicator = document.querySelector(`[data-indicator="${id}"]`);
+    const pill = document.querySelector(`[data-pill="${id}"]`);
+    const resultBox = document.getElementById(`result-${id}`);
+    indicator.className = 'indicator running';
+    if (pill) {
+      pill.className = 'pill result-running';
+      pill.textContent = 'Running';
+    }
+    if (resultBox) resultBox.style.display = 'none';
+  });
+
+  document.getElementById('autorun-status').textContent = 'Running automated checks…';
+  updateScore();
+
+  autoItems.forEach(([id, s], idx) => {
+    setTimeout(() => {
+      const result = s.autoResult;
+      s.running = false;
+      s.passed = result.pass;
+
+      const indicator = document.querySelector(`[data-indicator="${id}"]`);
+      const pill = document.querySelector(`[data-pill="${id}"]`);
+      const resultBox = document.getElementById(`result-${id}`);
+
+      indicator.className = `indicator ${result.pass ? 'passed' : 'failed'}`;
+      if (pill) {
+        pill.className = `pill ${result.pass ? 'result-pass' : 'result-fail'}`;
+        pill.textContent = result.pass ? 'Passed' : 'Failed';
+      }
+      if (resultBox) resultBox.style.display = 'block';
+
+      updateScore();
+
+      if (idx === autoItems.length - 1) {
+        setTimeout(() => {
+          const failedCount = autoItems.filter(([, st]) => !st.passed).length;
+          document.getElementById('autorun-status').textContent =
+            failedCount === 0
+              ? `✓ All ${autoItems.length} automated checks passed`
+              : `${autoItems.length - failedCount} of ${autoItems.length} automated checks passed · ${failedCount} need attention`;
+        }, 150);
+      }
+    }, 300 + idx * 110);
+  });
+}
+
+const totalItems = Object.keys(state).length;
+const totalCritical = Object.values(state).filter(s => s.critical).length;
+document.getElementById('score-total').textContent = totalItems;
+
+function updateScore() {
+  const passedCount = Object.values(state).filter(s => s.passed).length;
+  const criticalPassed = Object.values(state).filter(s => s.passed && s.critical).length;
+  const anyRunning = Object.values(state).some(s => s.running);
+  const allCriticalDone = criticalPassed === totalCritical;
+  const criticalAutoFailing = Object.values(state).some(s => s.critical && s.type === 'auto' && !s.running && !s.passed);
+
+  document.getElementById('score-num').textContent = passedCount;
+  document.getElementById('score-bar').style.width = `${(passedCount / totalItems) * 100}%`;
+
+  checklist.forEach((section, sIdx) => {
+    const done = section.items.filter(i => state[i.id].passed).length;
+    const progEl = document.querySelector(`.section-progress[data-section="${sIdx}"]`);
+    if (progEl) progEl.textContent = done;
+  });
+
+  const footerStatus = document.getElementById('footer-status');
+  const statusText = document.getElementById('status-text');
+  const publishBtn = document.getElementById('btn-publish');
+
+  footerStatus.classList.remove('ready', 'blocked');
+
+  if (anyRunning) {
+    statusText.textContent = 'Running automated checks…';
+    publishBtn.classList.add('disabled');
+  } else if (criticalAutoFailing) {
+    footerStatus.classList.add('blocked');
+    const failedCritical = Object.values(state).filter(s => s.critical && !s.passed).length;
+    statusText.textContent = `${failedCritical} critical check${failedCritical === 1 ? '' : 's'} failing — publish blocked`;
+    publishBtn.classList.add('disabled');
+  } else if (!allCriticalDone) {
+    const remaining = totalCritical - criticalPassed;
+    statusText.textContent = `${remaining} critical check${remaining === 1 ? '' : 's'} remaining — review manual items`;
+    publishBtn.classList.add('disabled');
+  } else if (passedCount < totalItems) {
+    footerStatus.classList.add('ready');
+    statusText.textContent = `Critical checks cleared · ${totalItems - passedCount} optional remaining`;
+    publishBtn.classList.remove('disabled');
+  } else {
+    footerStatus.classList.add('ready');
+    statusText.textContent = 'All checks passed — ready to publish';
+    publishBtn.classList.remove('disabled');
+  }
+}
+
+setTimeout(runAutoChecks, 400);
+document.getElementById('rerun-btn').addEventListener('click', runAutoChecks);
+
+document.getElementById('btn-publish').addEventListener('click', () => {
+  const btn = document.getElementById('btn-publish');
+  if (btn.classList.contains('disabled')) return;
+  btn.innerHTML = 'Publishing…';
+  setTimeout(() => {
+    btn.innerHTML = '✓ Published';
+    btn.style.background = '#1f6f3e';
+    btn.style.borderColor = '#1f6f3e';
+  }, 700);
+});
+
+document.getElementById('btn-save').addEventListener('click', () => {
+  const btn = document.getElementById('btn-save');
+  const original = btn.textContent;
+  btn.textContent = '✓ Draft saved';
+  setTimeout(() => { btn.textContent = original; }, 1500);
+});
+</script>
+
+</body>
+</html>
