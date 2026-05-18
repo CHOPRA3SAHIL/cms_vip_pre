@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pre-Publish Review — SEO Gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --paper: #ffffff;
+    --ink: #0a0a0a;
+    --ink-soft: #2a2a2a;
+    --muted: #8a8a85;
+    --line: #e8e6df;
+    --line-soft: #f1efe9;
+    --ok: #1f6f3e;
+    --ok-bg: #ecf3ee;
+    --warn: #8a6d1f;
+    --warn-bg: #f5f0e0;
+    --err: #8a2a1f;
+    --err-bg: #f5e8e5;
+    --shadow: 0 1px 0 rgba(0,0,0,0.04), 0 24px 80px -32px rgba(0,0,0,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter Tight', -apple-system, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(0,0,0,0.015) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(0,0,0,0.015) 0%, transparent 50%);
+    padding: 48px 24px;
+  }
+
+  .frame {
+    max-width: 960px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  header {
+    padding: 36px 56px 32px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+  }
+
+  .header-left .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .eyebrow-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--ok); display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .header-left h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .header-left h1 em {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .header-left .post-title {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .header-left .post-title span {
+    color: var(--ink-soft);
+  }
+
+  .header-right {
+    text-align: right;
+    min-width: 220px;
+  }
+
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .score {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-total {
+    font-size: 18px;
+    color: var(--muted);
+    margin-left: 2px;
+  }
+
+  .score-bar {
+    margin-top: 12px;
+    height: 1px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .autorun-banner {
+    padding: 14px 56px;
+    background: var(--line-soft);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+  }
+
+  .autorun-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .autorun-status { color: var(--muted); }
+
+  .rerun-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    border-radius: 2px;
+    transition: all 0.18s ease;
+  }
+
+  .rerun-btn:hover { border-color: var(--ink); background: var(--paper); }
+
+  .sections { padding: 16px 0 0; }
+
+  .section {
+    padding: 24px 56px 28px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .section-meta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .item {
+    border-top: 1px solid var(--line-soft);
+    padding: 14px 0;
+    transition: background 0.15s ease;
+    position: relative;
+  }
+
+  .item:first-of-type { border-top: none; padding-top: 4px; }
+
+  .item-row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 18px;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .indicator {
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .indicator.manual { cursor: pointer; }
+  .indicator.manual:hover { border-color: var(--ink-soft); }
+
+  .indicator.checked {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .indicator.checked::after {
+    content: '';
+    width: 9px;
+    height: 5px;
+    border-left: 1.5px solid var(--paper);
+    border-bottom: 1.5px solid var(--paper);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .indicator.running { border-color: var(--line); background: var(--paper); }
+  .indicator.running::after {
+    content: '';
+    width: 10px; height: 10px;
+    border: 1.5px solid var(--line);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .indicator.passed {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .indicator.passed::after {
+    content: '';
+    width: 9px; height: 5px;
+    border-left: 1.5px solid var(--paper);
+    border-bottom: 1.5px solid var(--paper);
+    transform: rotate(-45deg) translateY(-1px);
+  }
+
+  .indicator.failed {
+    background: var(--err-bg);
+    border-color: var(--err);
+  }
+  .indicator.failed::after {
+    content: '!';
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--err);
+    line-height: 1;
+  }
+
+  .item-main { min-width: 0; }
+
+  .item-title {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    margin-bottom: 2px;
+  }
+
+  .item-summary {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .item-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 2px;
+    background: var(--line-soft);
+    color: var(--muted);
+  }
+
+  .pill.critical { background: #2a2a2a; color: var(--paper); }
+  .pill.manual { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  .pill.result-pass { background: var(--ok-bg); color: var(--ok); }
+  .pill.result-fail { background: var(--err-bg); color: var(--err); }
+  .pill.result-running { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+
+  .chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--muted);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .item.open .chevron { transform: rotate(90deg); }
+
+  .detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .item.open .detail { max-height: 1200px; }
+
+  .detail-inner {
+    padding: 18px 0 8px 42px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .detail-block {
+    border-left: 1px solid var(--line);
+    padding-left: 18px;
+  }
+
+  .detail-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .detail-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+
+  .detail-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: var(--line-soft);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--ink);
+  }
+
+  .detail-text strong {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .result-box {
+    margin-top: 4px;
+    padding: 10px 12px;
+    background: var(--line-soft);
+    border-left: 2px solid var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .result-box.pass { background: var(--ok-bg); border-left-color: var(--ok); color: var(--ok); }
+  .result-box.fail { background: var(--err-bg); border-left-color: var(--err); color: var(--err); }
+
+  footer {
+    padding: 28px 56px 36px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.015));
+    border-top: 1px solid var(--line);
+  }
+
+  .footer-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .footer-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    transition: background 0.3s ease;
+  }
+
+  .footer-status.ready .dot { background: var(--ok); }
+  .footer-status.ready { color: var(--ok); }
+  .footer-status.blocked .dot { background: var(--err); }
+  .footer-status.blocked { color: var(--err); }
+
+  .footer-actions {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .btn {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 14px 28px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    min-width: 140px;
+  }
+
+  .btn:hover { border-color: var(--ink); }
+
+  .btn-save { flex: 0 1 auto; }
+
+  .btn-publish {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-publish.disabled {
+    background: var(--line-soft);
+    color: var(--muted);
+    border-color: var(--line);
+    cursor: not-allowed;
+  }
+
+  .btn-publish.disabled:hover { border-color: var(--line); }
+  .btn-publish:not(.disabled):hover { background: #000; }
+
+  .btn-publish-arrow {
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-publish:not(.disabled):hover .btn-publish-arrow {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 720px) {
+    body { padding: 16px 12px; }
+    header { padding: 28px 24px 24px; flex-direction: column; align-items: flex-start; }
+    .header-right { text-align: left; width: 100%; }
+    .autorun-banner { padding: 12px 24px; flex-wrap: wrap; }
+    .section { padding: 20px 24px 24px; }
+    footer { padding: 24px; }
+    .header-left h1 { font-size: 28px; }
+    .score { font-size: 44px; }
+    .detail-inner { padding-left: 0; }
+    .footer-actions { flex-direction: column; }
+    .btn { width: 100%; }
+    .lang-toggle { align-self: flex-start; }
+  }
+
+  /* Language toggle */
+  .lang-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: var(--paper);
+  }
+
+  .lang-toggle button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .lang-toggle button + button { border-left: 1px solid var(--line); }
+
+  .lang-toggle button.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .lang-toggle button:not(.active):hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <header>
+    <div class="header-left">
+      <div class="lang-toggle">
+        <button id="lang-hi" class="active" data-lang="hi">हिन्दी</button>
+        <button id="lang-en" data-lang="en">English</button>
+      </div>
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        <span data-i18n="eyebrow">पब्लिश से पहले रिव्यू · SEO गेट</span>
+      </div>
+      <h1 data-i18n="headline">लाइव होने से <em>पहले</em>।</h1>
+      <div class="post-title"><span data-i18n="postlabel">पोस्ट</span>: <span id="post-title-display">Budget 2026 — टैक्स स्लैब में बड़ा बदलाव, जानें किसे फायदा</span></div>
+    </div>
+    <div class="header-right">
+      <div class="score-label" data-i18n="readiness">तैयारी</div>
+      <div class="score">
+        <span id="score-num">0</span><span class="score-total">/<span id="score-total">0</span></span>
+      </div>
+      <div class="score-bar"><div class="score-bar-fill" id="score-bar"></div></div>
+    </div>
+  </header>
+
+  <div class="autorun-banner">
+    <div class="autorun-left">
+      <span class="autorun-status" id="autorun-status">ऑटोमैटिक जाँच चल रही है…</span>
+    </div>
+    <button class="rerun-btn" id="rerun-btn"><span data-i18n="rerun">↻ ऑटो जाँच दोबारा चलाएँ</span></button>
+  </div>
+
+  <div class="sections" id="sections"></div>
+
+  <footer>
+    <div class="footer-status" id="footer-status">
+      <span class="dot"></span>
+      <span id="status-text">जाँच चल रही है…</span>
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-save" id="btn-save" data-i18n="savedraft">ड्राफ्ट सेव करें</button>
+      <button class="btn btn-publish disabled" id="btn-publish">
+        <span class="btn-publish-arrow">↑</span><span data-i18n="publish">पब्लिश करें</span>
+      </button>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const checklist = [
+  {
+    section: 'Editorial Craft',
+    items: [
+      {
+        id: 'headline-craft',
+        title: 'Headline is tight, cased correctly, with a hook',
+        summary: 'No redundant words, no all-lowercase, top keyword leads, emotional hook for social.',
+        critical: true,
+        type: 'manual',
+        what: 'The headline carries the single most important high-traffic keyword at or near the front. It contains no redundant phrasing — if the headline already says \'दुल्हन बनीं\', it should not also say \'रचाया ब्याह\'. No word is set in all-lowercase. The on-site SEO headline is short and crisp; the social-share headline carries an emotional hook.',
+        why: 'Redundant words dilute the keyword density and waste the limited character budget Google shows in the SERP. All-lowercase words read as careless and hurt brand perception in Discover. A flat headline with no hook gets near-zero social pickup even when the SEO headline ranks.',
+        how: 'Read the headline aloud. Cut any word that repeats an idea already present. Capitalise correctly. Then ask: would I tap this if it appeared in my WhatsApp feed? If not, sharpen the hook without making it click-bait.'
+      },
+      {
+        id: 'headline-intro-match',
+        title: 'Headline angle is justified in the intro',
+        summary: 'The promise/angle in the headline is delivered inside the first paragraph.',
+        critical: true,
+        type: 'manual',
+        what: 'Whatever angle or claim the headline takes must be substantiated within the intro paragraph itself — not three paragraphs down. If a live blog headline was changed mid-update, the intro must be rewritten to match the new headline.',
+        why: 'Readers (and Google\'s quality systems) judge whether the page delivered on its headline within the first screen. A mismatch is read as click-bait even when the headline is technically accurate, and triggers fast bounce-backs to the SERP.',
+        how: 'After finalising the headline, re-read only the intro. If the headline\'s core promise isn\'t clearly answered there, edit the intro — not the headline. For updated live blogs, treat the intro rewrite as mandatory, not optional.'
+      },
+      {
+        id: 'intro-discipline',
+        title: 'Intro is 70–100 words',
+        summary: 'First paragraph length is auto-checked; opening-with-news is guidance.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Intro = 84 words · within the 70–100 range.' },
+        what: 'The automated gate checks one measurable thing: the first paragraph is between 70 and 100 words. The rest is editorial guidance the system cannot verify — the intro should open with the actual news (not essay-style background), and trending keywords should appear here with the English form in brackets where useful, e.g. (Budget 2026).',
+        why: 'Google weights the opening paragraph heavily for topical relevance and readers decide within seconds. Word count is enforceable automatically; whether it opens with the news is a judgment the editor still owns.',
+        how: 'Keep the first paragraph in the 70–100 word band. Separately, put the single most newsworthy fact in the first sentence and move context to paragraph two or three. Add the English keyword in brackets the first time the topic is named.'
+      },
+      {
+        id: 'paragraph-rhythm',
+        title: 'Paragraph length is balanced',
+        summary: 'No one-line fragments or oversized blocks; flow remains editor judgment.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: '7 paragraphs · avg 71 words · no one-line or >180-word blocks.' },
+        what: 'The automated gate flags structural problems it can measure: very short one-line paragraphs and oversized walls (roughly >180 words). It does not judge whether each paragraph logically follows the previous one — that remains the editor\'s read.',
+        why: 'Erratic paragraph lengths correlate with thin or padded content and render badly on mobile and AMP. Length is measurable automatically; narrative flow is not.',
+        how: 'Keep body paragraphs in a roughly even band. If the check flags a fragment or a wall, merge or split it. Separately, read the piece to confirm each paragraph connects to the one before it.'
+      },
+      {
+        id: 'excerpt-original',
+        title: 'Excerpt is original, not copied from the body',
+        summary: '2–3 fresh lines; covers keywords the headline couldn\'t; creates curiosity.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Excerpt vs body similarity: 12% · no shared sentence · distinct.' },
+        what: 'The excerpt / meta description is 2–3 sentences written separately — no sentence is copy-pasted from the article body. It covers the important keywords that could not fit in the headline, and it leaves the reader wanting to read on.',
+        why: 'A meta description that duplicates the body wastes the one piece of SERP copy you fully control and gives Google a reason to auto-rewrite it. A distinct, curiosity-driven excerpt directly lifts click-through rate from search and social.',
+        how: 'Write the excerpt last, after the body is final, with the body hidden. If any sentence in it also appears verbatim in the article, rewrite that sentence. End on an open loop, not a full summary.'
+      }
+    ]
+  },
+  {
+    section: 'Content Integrity',
+    items: [
+      {
+        id: 'word-count',
+        title: 'Word count meets minimum threshold',
+        summary: 'Article body has at least 300 words across 3+ paragraphs.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: '412 words across 5 paragraphs — passed.' },
+        what: 'Confirms the post contains a substantive body — at minimum 300 words distributed across three or more paragraphs.',
+        why: 'Thin pages compete poorly in news ranking and are routinely excluded from Google Discover. Below this floor, the page is flagged as low-value and pushed down.',
+        how: 'If under threshold, expand context, background, related developments, or quotes. Avoid padding — add information the reader cannot already get from the headline.'
+      },
+      {
+        id: 'title-meta',
+        title: 'Title & meta — full names + English keyword in summary',
+        summary: 'Title & meta filled with full names; English keyword required in the meta/summary, suggested in title.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Title 58c · Meta 152c · Full name present · English keyword found in meta.' },
+        what: 'SEO Title (50–60 characters) and Meta Description (140–160 characters) must both exist and use <strong>full names</strong> (not first names alone, not initials). The agreed English keyword is <strong>required in the meta description / summary</strong>. In the title it is <strong>only a suggestion</strong> — add it if it fits naturally, but it is not enforced there.',
+        why: 'These are the click decision in the SERP. Full names match how readers search; partial names fail. The English keyword in the summary is what makes a regional-language story discoverable by mixed-script queries, so it must be present there. Forcing it into the title can make the headline read awkwardly, so it stays optional in the title.',
+        how: 'Front-load the primary keyword. Spell names out completely. Always place the English keyword somewhere in the meta description. In the title, include it only if it reads naturally — skip it rather than break the headline. Avoid duplicating the H1 verbatim.'
+      },
+      {
+        id: 'heading-structure',
+        title: 'Heading hierarchy is valid (H1 → H2 → H3)',
+        summary: 'Exactly one H1, H2s precede H3s, no skipped levels.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: '1 H1 · 4 H2 · 2 H3 · hierarchy clean.' },
+        what: 'The post must contain exactly one H1 (usually the post title), with H2s and H3s used in correct hierarchical order without skipping levels.',
+        why: 'Heading structure is how crawlers and screen readers parse meaning. Multiple H1s confuse intent; skipped levels (H1 → H4) signal poor semantic structure and weaken keyword association.',
+        how: 'Use H2 for major sections, H3 only nested inside an H2. Never bold a paragraph and call it a heading — use real heading tags.'
+      },
+      {
+        id: 'alt-text',
+        title: 'All images have descriptive ALT text',
+        summary: 'Every image has non-empty, descriptive alt attribute.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: false, message: '2 of 5 images missing alt text. Featured image alt present.' },
+        what: 'Every image in the post body and the featured image must carry an alt attribute that describes what is in the image — not the file name, not keyword stuffing.',
+        why: 'ALT text is read by accessibility tools and parsed by image search. Missing alt is now a mandatory-fail at our publishing standard. It also feeds Google Discover image selection.',
+        how: 'Describe what someone who cannot see the image would need to know: subject, action, context. For people, name them. For charts, summarise the takeaway.'
+      },
+      {
+        id: 'click-bait',
+        title: 'Title is not click-bait',
+        summary: 'Headline delivers what it promises, no shock words or curiosity-gap fishing.',
+        critical: true,
+        type: 'manual',
+        what: 'Title accurately summarises the article. No \'You won\'t believe\', \'SHOCKING\', vague pronouns (\'THIS happened…\'), or curiosity-gap question marks where the article does not in fact answer the question. The article body must deliver, within the first two paragraphs, exactly what the headline promised.',
+        why: 'Google\'s site-quality systems explicitly down-rank click-bait at the domain level. One viral click-bait win is not worth the long-tail penalty to every other URL on the site. Repeated click-bait is also tracked by Google Discover and removes the entire site from the feed.',
+        how: 'Read the title and the lead. If the lead does not directly satisfy the headline\'s promise within two sentences, rewrite one of them. When in doubt, ask: would I feel cheated reading this if I clicked on that headline?'
+      }
+    ]
+  },
+  {
+    section: 'Originality & Content Quality',
+    items: [
+      {
+        id: 'no-copy-paste',
+        title: 'No copy-paste — including from our own site',
+        summary: 'Body is original; old material rewritten; background limited to 1–2 lines.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Plagiarism scan: 0 matched blocks (own site + web) · original.' },
+        what: 'No part of the body is copy-pasted from any source, including our own previously published articles. Old-story material used for background is rewritten and limited to a maximum of one or two lines, not lifted verbatim.',
+        why: 'Self-duplication splits ranking signals between the old and new URL so neither performs. External copy-paste risks duplicate-content suppression and, for some sources, legal exposure. Original phrasing is also a direct quality signal Google now evaluates.',
+        how: 'If you need background from an old piece, close it and write the one or two lines from memory in your own words. When in doubt, run the body through the duplicate scan before publishing.'
+      },
+      {
+        id: 'translation-quality',
+        title: 'Translation is human, not raw machine output',
+        summary: 'No full Google Translate; meaning-based, written for the Hindi reader\'s angle.',
+        critical: true,
+        type: 'manual',
+        what: 'When the story is built from an English report, it is not run wholesale through Google Translate. The translation is meaning-based (भावानुवाद), in your own words, written from the Hindi reader\'s angle after reading the full source first. Hindi sites are not used as the source/reference link.',
+        why: 'Raw machine translation reads unnaturally, fails readability checks, and is increasingly detectable as low-effort content. Writing for the local reader\'s angle is what differentiates the story from every other site running the same wire copy.',
+        how: 'Read the entire English source before writing a word. Then write the story as if explaining it to a Hindi reader, not translating it line by line. Cite the original English/primary source, never a Hindi aggregator.'
+      },
+      {
+        id: 'claims-verified',
+        title: 'No unverified claims or superstition in sensitive topics',
+        summary: 'Health / Religion / Lifestyle claims are verified; no superstition presented as fact.',
+        critical: true,
+        type: 'manual',
+        what: 'In Health, Religion, and Lifestyle stories, there is no unverified claim or superstition presented as fact. Any health or remedy claim is attributed to a credible authority, not stated in the publication\'s own voice.',
+        why: 'These are YMYL (Your Money or Your Life) categories where Google applies the strictest quality scrutiny. Unverified claims here can suppress the entire category\'s rankings and create real-world harm and liability.',
+        how: 'For any factual or health claim, ask \'who said this and can I link it?\'. If you cannot attribute it to a credible source, either cut it or frame it explicitly as a belief/claim, not as established fact.'
+      },
+      {
+        id: 'social-comment-sourcing',
+        title: 'Social-comment sourcing is clean',
+        summary: 'No abusive/personal comments; 1–2 comments not made the headline; verified handles only.',
+        critical: false,
+        type: 'manual',
+        what: 'For social-post-based stories: one or two random comments are not turned into the main headline angle. Abusive, trivial, or personal-attack comments are not used. Any comment quoted is from a verified or genuine influencer handle.',
+        why: 'Building a headline on a couple of unverified comments produces fragile, low-trust content that ages badly and invites complaints. Quoting abusive or fake-handle comments damages credibility and can amplify harassment.',
+        how: 'If the story rests on social reaction, ensure the headline reflects the broader reaction, not one comment. Screenshot only verified handles. Drop anything abusive or personal entirely.'
+      },
+      {
+        id: 'photo-selection',
+        title: 'Photo is fresh, relevant and rights-clear',
+        summary: 'Latest photo, story-relevant (not symbolic), unique per story, credit/rights clear.',
+        critical: true,
+        type: 'manual',
+        what: 'The image is the latest available (a file photo only if there is genuinely no option). It is visually relevant to the story — not a generic building, logo, or symbolic image. If multiple stories share a topic, each uses a different photo. Copyright is clear; no one\'s exclusive photo is lifted from social; a celebrity\'s social photo has their handle credited.',
+        why: 'The featured image drives Google Discover placement and social CTR more than almost any other element. A symbolic or recycled image kills tap-through, and lifting exclusive/social images creates copyright exposure.',
+        how: 'Prefer a fresh, on-topic image even if it takes longer to source. If reusing a topic photo, change it for this story. For any social/celebrity image, add the handle in the credit before publishing.'
+      },
+      {
+        id: 'image-filename-caption',
+        title: 'Image filename and caption are correct',
+        summary: 'Descriptive filename (not 1.jpg); caption = Keyword → Description → Source; alt + caption both filled.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Filenames descriptive · caption & alt filled on all · caption≠alt.' },
+        what: 'The image file is named after the story / person / event — not \'image.jpg\' or \'1.jpg\'. The caption follows the format Keyword → Photo description → Source. Both the caption and the alt text are filled in the CMS, and the caption is not copy-pasted into the alt text.',
+        why: 'Descriptive filenames are a real image-search ranking factor. A structured caption improves context for both readers and Google\'s image understanding. Duplicating caption into alt text wastes the distinct signal alt text is meant to provide.',
+        how: 'Rename the file before upload. Write the caption as keyword-first, then describe, then credit the source. Write alt text separately, focused on describing the image for someone who cannot see it.'
+      },
+      {
+        id: 'embed-placement',
+        title: 'Embeds are placed and framed correctly',
+        summary: 'Video not before 3rd paragraph, H2 subhead before it; tweets only if they add value.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: 'No embed before para 3 · each embed preceded by an H2.' },
+        what: 'Any video embed appears no earlier than the third paragraph and is preceded by an H2-format subhead. A tweet is embedded only when it carries actual audio/video/photo value; a controversial tweet is screenshotted, not live-embedded.',
+        why: 'An embed above the third paragraph pushes the news down and hurts LCP and reading flow. A live-embedded controversial tweet can be deleted at any time, breaking the story and leaving a blank — a screenshot is permanent and safe.',
+        how: 'Move any early embed below the third paragraph and add an H2 subhead above it. Before embedding a tweet, ask whether it adds media value; if it is merely text or controversial, screenshot it instead.'
+      },
+      {
+        id: 'credit-attribution',
+        title: 'Byline and credit fields are filled',
+        summary: 'Auto-checks that byline + credit fields exist; correctness stays editorial.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Byline present (not Admin/Desk) · agency-credit field non-empty where flagged.' },
+        what: 'The automated gate confirms the structural basics: a real byline exists (not "Admin"/"Editorial Desk") and, where the agency-input flag is set, the agency-credit field is not empty. Whether the attribution is actually correct and complete — right agency, all reporters, who did what — is an editorial judgment the system cannot verify.',
+        why: 'Missing byline or empty credit fields are a measurable, common slip with plagiarism and legal risk. The tool can guarantee the fields are filled; it cannot guarantee they are accurate.',
+        how: 'Fill the byline and any required credit fields before publishing. Separately, confirm the agency/exclusive-source credit is the correct one and that every contributing reporter is named.'
+      }
+    ]
+  },
+  {
+    section: 'On-Page SEO',
+    items: [
+      {
+        id: 'slug-url',
+        title: 'URL slug is clean and locked',
+        summary: 'English slug, hyphenated, no transliteration, will not change post-publish.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Slug: top-10-election-highlights · English · 38 chars.' },
+        what: 'URL slug is in English (translated/transliterated URLs are blocked), uses hyphens, contains the primary keyword, and is final — the slug must not change after publishing.',
+        why: 'URL changes post-publish kill social shares, break backlinks, and force Google to re-process the page. Translated slugs degrade indexing in non-Latin scripts.',
+        how: 'Decide the slug before hitting publish. Keep it under ~75 characters. Strip stop words (the, a, of) where it stays readable.'
+      },
+      {
+        id: 'internal-links',
+        title: 'Internal links to relevant existing posts',
+        summary: 'At least 2 contextual internal links to related articles on the site.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: '3 internal links detected · all dofollow · anchors descriptive.' },
+        what: 'The article body links to two or more relevant existing posts on the site, placed naturally inside body copy (not in a \'Related\' widget).',
+        why: 'Internal links pass authority, help Google discover and re-crawl older pages, and increase session depth. New articles starved of internal links struggle to get indexed quickly.',
+        how: 'Link the first mention of a person, event, or topic to the canonical article on that topic. Use descriptive anchor text — never \'click here\' or \'read more\'.'
+      }
+    ]
+  },
+  {
+    section: 'Media, Embeds & Performance',
+    items: [
+      {
+        id: 'featured-image',
+        title: 'Featured image is 1200px+ and optimised',
+        summary: 'Min 1200px wide, under ~200KB, WebP preferred, 16:9 ratio.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: '1600×900 · 142KB · WebP · 16:9 ratio.' },
+        what: 'Featured image is at least 1200 pixels wide on its long edge, served as WebP where supported, file size under approximately 200KB, in 16:9 or 1.91:1 aspect ratio.',
+        why: 'Below 1200px disqualifies the article from Google Discover image placement entirely. Oversized files inflate LCP, the metric Google watches most closely for ranking.',
+        how: 'Resize before upload — do not rely on WordPress responsive sizes alone. Run heavy images through compression. Reject screenshots saved at retina-2x without resizing.'
+      },
+      {
+        id: 'image-quality',
+        title: 'No blurry, low-resolution or stock-cliché images',
+        summary: 'All body images are sharp, original where possible, contextually relevant.',
+        critical: false,
+        type: 'manual',
+        what: 'Inline body images are visibly sharp, not upscaled from low-res sources, and directly relevant to the paragraph they sit beside. No generic stock photography where original visuals exist.',
+        why: 'Image quality is now a quality signal Google reads via its vision models. Blurred or off-topic images correlate with thin content and drag down the page\'s ranking signal.',
+        how: 'If the only available image is poor quality, prefer fewer images over bad ones. Caption every image with context the alt text does not already cover.'
+      },
+      {
+        id: 'embeds',
+        title: 'Rich embeds — aim for 1 to 3 per story',
+        summary: 'One or more video / tweet / Instagram / chart embeds where relevant.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: '2 embeds detected (1 tweet, 1 video) · within the 1–3 target.' },
+        what: 'The article includes one to three rich embeds — tweets, YouTube/native videos, Instagram posts, charts, or quote blocks. <strong>Target is 1 to 3 embeds per story.</strong> At least one where the story warrants it; two or three is ideal for bigger stories. This is a recommended check, not a blocker.',
+        why: 'Rich embeds increase dwell time, give Google additional crawlable signals, qualify the page for video-rich result types, and improve social shareability. Stories with relevant embeds get longer average session duration, which feeds back into ranking.',
+        how: 'Embed natively (paste the URL on its own line in Gutenberg) rather than iframing. Native embeds load lazily and don\'t block render. For breaking stories, the source tweet plus a video clip is a strong default.'
+      }
+    ]
+  },
+  {
+    section: 'Editorial Strategy',
+    items: [
+      {
+        id: 'cluster-coverage',
+        title: 'Cluster coverage — covers the trending angle',
+        summary: 'Article fits an active topic cluster; trending sub-angles suggested for follow-up.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Matched cluster: General Election 2026 · 3 trending sub-angles suggested for follow-ups.' },
+        what: 'The article is mapped to an active topic cluster on the site, and the system surfaces 2–3 related trending sub-angles that the desk has not yet covered. The author confirms the chosen angle is fresh within the cluster (not a duplicate of a sibling article).',
+        why: 'Cluster coverage is what wins Top Stories. Google ranks sites that demonstrate sustained, multi-angle coverage of a topic above those that publish one-off pieces. Missing the trending sub-angle of a story is the single biggest avoidable traffic loss in news SEO.',
+        how: 'Review the suggested trending angles below. If one is more relevant than the current article\'s angle, refocus the headline and lead. If the current angle is right, log the suggestions for the desk\'s next piece.'
+      },
+      {
+        id: 'competition-gap',
+        title: 'Competition gap — stories competitors covered, we did not',
+        summary: 'Surfaces top stories ranking from competitor domains on this topic in the last 24h.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: '4 competitor stories on adjacent topics surfaced · 2 flagged as missed angles for editorial review.' },
+        what: 'A scan of competing domains in the same niche surfaces stories that are ranking well and that we have not yet covered. The author reviews whether any of those stories should be commissioned as separate articles or folded into this piece.',
+        why: 'Sites that consistently cover what their competitors cover (plus their own original angles) win the share-of-voice fight on news topics. Missing what competitors are publishing on means missing the cluster, missing Top Stories, and ceding the search result page.',
+        how: 'Review the surfaced stories. Tag any genuinely missed angles to the editorial backlog before publishing this piece. Do not block this article on competitor coverage unless this article duplicates one of them.'
+      }
+    ]
+  },
+  {
+    section: 'Author & Trust Signals',
+    items: [
+      {
+        id: 'author-byline',
+        title: 'Author is assigned and has a complete profile',
+        summary: 'Byline is set; author page exists with bio, photo, credentials.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Author profile complete · bio 78 words · photo set · 2 social links.' },
+        what: 'Post has a real author byline (not \'Admin\' or \'Editorial Desk\'). The author\'s profile page exists, has a bio of 50+ words, a photo, and links to professional credentials or social profiles.',
+        why: 'E-E-A-T (Experience, Expertise, Authoritativeness, Trust) is read directly from author profiles. News articles without identifiable authors are systematically deprioritised, especially in YMYL categories.',
+        how: 'If publishing under a desk byline, ensure that desk profile still exists with editorial standards listed. For new authors, complete the profile before first publish, not after.'
+      },
+      {
+        id: 'sources-citations',
+        title: 'Sources are cited and linked',
+        summary: 'Factual claims, statistics and quotes link to primary sources.',
+        critical: false,
+        type: 'manual',
+        what: 'Statistics, quotes, and factual claims either link to their primary source (government release, official statement, original report) or are attributed inline (\'according to…\').',
+        why: 'Sourcing is a direct E-E-A-T signal. Unsourced claims in news content also expose the site to misinformation flags and reduce trust from Google\'s quality raters.',
+        how: 'Link the first time a statistic is cited. Prefer primary sources (the press release itself) over aggregators (other news sites quoting the press release).'
+      }
+    ]
+  },
+  {
+    section: 'Final Preview',
+    items: [
+      {
+        id: 'preview-readthrough',
+        title: 'Full read-through done in preview',
+        summary: 'Whole copy read once; spelling/grammar checked; no padding sentences.',
+        critical: true,
+        type: 'manual',
+        what: 'The entire article has been read once in preview — not skimmed. Spelling and grammar are checked. No sentences were added purely to hit word count. The same point is not made twice.',
+        why: 'The preview read is the last line of defence against errors that automated checks cannot catch — awkward phrasing, factual slips, padding, accidental repetition. These directly affect reader trust and quality scoring.',
+        how: 'Read it as a reader, not as the writer. If a sentence adds no new information, cut it. If a point is repeated, keep the stronger instance. Fix every spelling/grammar issue before continuing.'
+      },
+      {
+        id: 'preview-no-repeat',
+        title: 'No repeated sentence across body, excerpt, meta',
+        summary: 'Same sentence does not appear in body and excerpt/meta description.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'No identical sentence shared across body, excerpt or meta.' },
+        what: 'No identical sentence appears in more than one place — the body, the excerpt, and the meta description must not share the same sentence.',
+        why: 'Repetition across these fields wastes distinct ranking and CTR signals and signals low editorial effort. The excerpt/meta exists to add information the body cannot show in the SERP.',
+        how: 'Compare the excerpt/meta against the intro specifically — that is where accidental duplication happens most. Rewrite any shared sentence so each field pulls its own weight.'
+      },
+      {
+        id: 'preview-everything-works',
+        title: 'All embeds, images and links work in preview',
+        summary: 'Every embed renders, every image loads, every link resolves correctly.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: false, message: '1 broken link found (1 internal 404) · 0 failed embeds · all images load.' },
+        what: 'In the preview, every embed renders, every image loads, and every internal/external link opens the correct destination. The URL is checked one final time for any wrong or junk character.',
+        why: 'A broken embed or dead link discovered after publish damages the reader experience at the worst possible moment — when traffic is highest — and a broken link wastes the internal-linking SEO value entirely.',
+        how: 'Click every link in the preview. Confirm each embed actually displays (not just a blank space). Re-check the slug character by character. Only then proceed to publish.'
+      }
+    ]
+  },
+  {
+    section: 'Indexability & Freshness',
+    items: [
+      {
+        id: 'noindex',
+        title: 'Article is set to index, follow',
+        summary: 'No accidental noindex / nofollow on this post.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Robots meta: index, follow · visibility: public.' },
+        what: 'The post is not marked noindex. Robots meta is index, follow. The post is not in a category that has been blocked at template level.',
+        why: 'A single misconfigured Yoast / Rank Math toggle removes the article from Google entirely. This is the most expensive silent failure in publishing.',
+        how: 'Confirm the visibility toggle is Public and the SEO plugin\'s index toggle is on. If publishing into a normally-noindexed category, double-check the override.'
+      },
+      {
+        id: 'publish-date',
+        title: 'Publish date and modified date are correct',
+        summary: 'datePublished matches now, dateModified updates on edits.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'datePublished: now (IST) · dateModified: auto-tracking enabled.' },
+        what: 'datePublished is set to the actual current publish moment in IST, not backdated. dateModified is wired to update automatically on any future edit.',
+        why: 'News ranking is extremely time-sensitive. A backdated article will never enter Top Stories. A frozen dateModified prevents Google from recognising updates.',
+        how: 'Do not manually edit the publish date unless this is a genuine repost of older content. For breaking updates, let the modified date roll naturally.'
+      },
+      {
+        id: 'category-tags',
+        title: 'Category and tags are assigned',
+        summary: 'One primary category, 3–8 relevant tags, no over-tagging.',
+        critical: false,
+        type: 'auto',
+        autoResult: { pass: true, message: '1 primary category · 5 tags · all from existing taxonomy.' },
+        what: 'Post is assigned to one clear primary category. Tags number between three and eight, are reused from the existing tag taxonomy where possible, and describe entities (people, places, events) — not adjectives.',
+        why: 'Categories and tags shape internal-link archives that Google crawls heavily. Over-tagging fragments these archives into thin pages and triggers index bloat.',
+        how: 'Prefer existing tags. Create a new tag only for a new named entity. Never tag with adjectives like \'amazing\' or \'latest\'.'
+      },
+      {
+        id: 'duplicate-check',
+        title: 'No duplicate content with existing posts',
+        summary: 'Headline and lead do not closely match a previously published article.',
+        critical: true,
+        type: 'auto',
+        autoResult: { pass: true, message: 'Highest similarity score: 31% (well below 85% threshold).' },
+        what: 'A similarity scan against the last 90 days of published articles flags any post whose headline or opening paragraph is more than 85% similar to an existing one.',
+        why: 'Near-duplicate posts cannibalise each other\'s rankings — neither wins, both lose. For news stories, this also risks Google de-duplicating both from Top Stories.',
+        how: 'If a duplicate is flagged, decide: update the existing article instead, or substantially rewrite the angle, headline, and lead before publishing.'
+      }
+    ]
+  }
+];;
+
+/* ---------- Bilingual content (Hindi default) ---------- */
+
+const SECTION_HI = {
+  "Content Integrity": "कंटेंट की मूल बातें",
+  "On-Page SEO": "ऑन-पेज SEO",
+  "Media, Embeds & Performance": "मीडिया, एम्बेड और स्पीड",
+  "Editorial Strategy": "एडिटोरियल रणनीति",
+  "Indexability & Freshness": "इंडेक्सिंग और ताज़गी",
+  "Editorial Craft": "लेखन की बारीकियाँ",
+  "Originality & Content Quality": "मौलिकता और कंटेंट क्वालिटी",
+  "Final Preview": "फाइनल प्रीव्यू",
+  "Author & Trust Signals": "लेखक और भरोसे के संकेत"
+};
+
+const UI = {
+  hi: {
+    eyebrow: "पब्लिश से पहले रिव्यू · SEO गेट",
+    headline: 'लाइव होने से <em>पहले</em>।',
+    postlabel: "पोस्ट",
+    readiness: "तैयारी",
+    rerun: "↻ ऑटो जाँच दोबारा चलाएँ",
+    savedraft: "ड्राफ्ट सेव करें",
+    publish: "पब्लिश करें",
+    critical: "ज़रूरी",
+    manual: "खुद जाँचें",
+    running: "जाँच रही",
+    passed: "पास",
+    failed: "फेल",
+    lblResult: "ऑटोमैटिक जाँच का नतीजा",
+    lblWhat: "यह क्या जाँचता है",
+    lblWhy: "यह क्यों ज़रूरी है",
+    lblHow: "कैसे पास करें / ठीक करें",
+    critWord: "ज़रूरी",
+    progressCrit: "ज़रूरी",
+    autorunRunning: "ऑटोमैटिक जाँच चल रही है…",
+    autorunAllPass: n => `✓ सभी ${n} ऑटोमैटिक जाँच पास`,
+    autorunSome: (p,n,f) => `${n} में से ${p} जाँच पास · ${f} पर ध्यान दें`,
+    stRunning: "ऑटोमैटिक जाँच चल रही है…",
+    stBlocked: n => `${n} ज़रूरी जाँच फेल — पब्लिश रुका है`,
+    stRemaining: n => `${n} ज़रूरी जाँच बाकी — खुद जाँचने वाले पॉइंट देखें`,
+    stOptional: n => `ज़रूरी जाँच पूरी · ${n} वैकल्पिक बाकी`,
+    stReady: "सभी जाँच पास — पब्लिश के लिए तैयार",
+    publishing: "पब्लिश हो रहा है…",
+    published: "✓ पब्लिश हो गया",
+    draftSaved: "✓ ड्राफ्ट सेव हुआ"
+  },
+  en: {
+    eyebrow: "Pre-Publish Review · SEO Gate",
+    headline: 'Before this goes <em>live</em>.',
+    postlabel: "post",
+    readiness: "Readiness",
+    rerun: "↻ Re-run auto checks",
+    savedraft: "Save as draft",
+    publish: "Publish",
+    critical: "Critical",
+    manual: "Manual",
+    running: "Running",
+    passed: "Passed",
+    failed: "Failed",
+    lblResult: "Automated check result",
+    lblWhat: "What this checks",
+    lblWhy: "Why it matters",
+    lblHow: "How to fix / pass",
+    critWord: "critical",
+    progressCrit: "critical",
+    autorunRunning: "Running automated checks…",
+    autorunAllPass: n => `✓ All ${n} automated checks passed`,
+    autorunSome: (p,n,f) => `${p} of ${n} automated checks passed · ${f} need attention`,
+    stRunning: "Running automated checks…",
+    stBlocked: n => `${n} critical check${n===1?'':'s'} failing — publish blocked`,
+    stRemaining: n => `${n} critical check${n===1?'':'s'} remaining — review manual items`,
+    stOptional: n => `Critical checks cleared · ${n} optional remaining`,
+    stReady: "All checks passed — ready to publish",
+    publishing: "Publishing…",
+    published: "✓ Published",
+    draftSaved: "✓ Draft saved"
+  }
+};
+
+/* Hindi explanations — simple newsroom language */
+const HI = {
+  "word-count": {
+    title: "शब्द संख्या तय सीमा से कम न हो",
+    summary: "स्टोरी कम से कम 300 शब्दों की हो और 3+ पैराग्राफ में हो।",
+    what: "स्टोरी में कम से कम 300 शब्द हों और ये 3 या उससे ज़्यादा पैराग्राफ में बँटे हों।",
+    why: "बहुत छोटी स्टोरी न्यूज़ रैंकिंग में कमज़ोर रहती है और अक्सर Google Discover से बाहर रह जाती है। तय सीमा से नीचे स्टोरी को कमज़ोर मान लिया जाता है।",
+    how: "कम पड़ने पर बैकग्राउंड, संबंधित अपडेट या कोट्स जोड़कर बढ़ाएँ। सिर्फ़ शब्द बढ़ाने के लिए फ़ालतू लाइनें न डालें — नई जानकारी जोड़ें।"
+  },
+  "title-meta": {
+    title: "टाइटल और मेटा — पूरा नाम + समरी में अंग्रेज़ी कीवर्ड",
+    summary: "टाइटल और मेटा भरे हों, पूरा नाम हो; अंग्रेज़ी कीवर्ड मेटा/समरी में ज़रूरी, टाइटल में सुझाव।",
+    what: "SEO टाइटल (50–60 अक्षर) और मेटा डिस्क्रिप्शन (140–160 अक्षर) दोनों भरे हों और <strong>पूरा नाम</strong> हो (सिर्फ़ पहला नाम या आद्याक्षर नहीं)। तय अंग्रेज़ी कीवर्ड <strong>मेटा डिस्क्रिप्शन / समरी में ज़रूरी</strong> है। टाइटल में यह <strong>सिर्फ़ सुझाव</strong> है — सहज लगे तो डालें, पर वहाँ ज़रूरी नहीं।",
+    why: "सर्च में यही पढ़कर पाठक क्लिक करता है। पूरा नाम वैसे ही सर्च होता है जैसे लोग खोजते हैं। समरी में अंग्रेज़ी कीवर्ड से ही हिंदी स्टोरी मिले-जुले सर्च में मिलती है, इसलिए वहाँ होना ज़रूरी है। टाइटल में ज़बरदस्ती डालने से हेडलाइन अटपटी लगती है, इसलिए वहाँ वैकल्पिक है।",
+    how: "मुख्य कीवर्ड शुरू में रखें। नाम पूरा लिखें। अंग्रेज़ी कीवर्ड मेटा डिस्क्रिप्शन में हमेशा रखें। टाइटल में तभी डालें जब सहज लगे — हेडलाइन बिगाड़ने से अच्छा छोड़ दें। टाइटल को H1 जैसा हूबहू न दोहराएँ।"
+  },
+  "heading-structure": {
+    title: "हेडिंग का क्रम सही हो (H1 → H2 → H3)",
+    summary: "एक ही H1 हो, H2 पहले फिर H3, कोई लेवल छूटा न हो।",
+    what: "पोस्ट में सिर्फ़ एक H1 हो (आम तौर पर टाइटल), और H2/H3 सही क्रम में लगे हों — बीच का कोई लेवल छोड़ा न जाए।",
+    why: "हेडिंग के क्रम से ही सर्च इंजन और स्क्रीन रीडर स्टोरी का मतलब समझते हैं। कई H1 या क्रम टूटना (H1 के बाद सीधे H4) कमज़ोर ढाँचा दिखाता है।",
+    how: "बड़े सेक्शन के लिए H2, उसके अंदर ही H3 इस्तेमाल करें। किसी पैराग्राफ को बोल्ड करके हेडिंग न मानें — असली हेडिंग टैग लगाएँ।"
+  },
+  "alt-text": {
+    title: "हर फोटो में सही ALT टेक्स्ट हो",
+    summary: "हर इमेज में खाली नहीं, बल्कि वर्णन करने वाला alt हो।",
+    what: "स्टोरी की हर इमेज और फीचर इमेज में alt टेक्स्ट हो जो बताए कि फोटो में क्या है — फ़ाइल का नाम या ठूँसे हुए कीवर्ड नहीं।",
+    why: "ALT टेक्स्ट को एक्सेसिबिलिटी टूल पढ़ते हैं और इमेज सर्च इसे समझता है। हमारे स्टैंडर्ड में alt न होना सीधे फेल माना जाता है। यह Google Discover की इमेज भी तय करता है।",
+    how: "वही लिखें जो किसी न देख पाने वाले को बताना ज़रूरी हो: कौन, क्या कर रहा है, संदर्भ क्या है। व्यक्ति हो तो नाम लिखें। ग्राफ़ हो तो उसका सार लिखें।"
+  },
+  "click-bait": {
+    title: "टाइटल क्लिकबेट न हो",
+    summary: "हेडलाइन जो दावा करे वही स्टोरी दे, चौंकाने वाले शब्द न हों।",
+    what: "टाइटल स्टोरी का सही सार दे। 'यक़ीन नहीं होगा', 'चौंकाने वाला', अधूरी बात ('ये हुआ…') या ऐसा सवाल न हो जिसका जवाब स्टोरी देती ही नहीं। पहले दो पैराग्राफ में वही मिले जो हेडलाइन ने वादा किया।",
+    why: "Google की क्वालिटी सिस्टम क्लिकबेट को पूरी साइट के स्तर पर नीचे करती है। एक वायरल क्लिकबेट का फ़ायदा बाक़ी सभी URL के नुक़सान से कम है। बार-बार क्लिकबेट से पूरी साइट Discover से हट सकती है।",
+    how: "टाइटल और इंट्रो साथ पढ़ें। अगर इंट्रो दो लाइन में हेडलाइन का वादा पूरा नहीं करता तो किसी एक को बदलें। ख़ुद से पूछें — इस हेडलाइन पर क्लिक करके क्या मैं ठगा महसूस करूँगा?"
+  },
+  "slug-url": {
+    title: "URL साफ़ हो और तय हो",
+    summary: "अंग्रेज़ी URL, हाइफ़न वाला, अनुवाद नहीं, पब्लिश के बाद बदले नहीं।",
+    what: "URL अंग्रेज़ी में हो (हिंदी/देवनागरी या अनुवाद वाला URL नहीं), हाइफ़न से जुड़ा हो, मुख्य कीवर्ड हो, और यही फ़ाइनल हो — पब्लिश के बाद बदले नहीं।",
+    why: "पब्लिश के बाद URL बदलने से सोशल शेयर और बैकलिंक टूट जाते हैं और Google को पेज दोबारा प्रोसेस करना पड़ता है। अनुवाद वाला URL इंडेक्सिंग बिगाड़ता है।",
+    how: "पब्लिश से पहले ही URL तय कर लें। ~75 अक्षर से कम रखें। is, of, the जैसे फ़िलर शब्द हटाएँ अगर पढ़ने में दिक़्क़त न हो।"
+  },
+  "internal-links": {
+    title: "संबंधित पुरानी स्टोरीज़ के इंटरनल लिंक",
+    summary: "कम से कम 2 संबंधित स्टोरीज़ के इंटरनल लिंक हों।",
+    what: "स्टोरी के अंदर 2 या ज़्यादा संबंधित पुरानी स्टोरीज़ के लिंक हों, जो टेक्स्ट में स्वाभाविक रूप से लगे हों ('संबंधित' विजेट में नहीं)।",
+    why: "इंटरनल लिंक अथॉरिटी पास करते हैं, Google को पुराने पेज दोबारा क्रॉल करवाते हैं और पाठक को साइट पर रोकते हैं। बिना इंटरनल लिंक नई स्टोरी जल्दी इंडेक्स नहीं होती।",
+    how: "किसी व्यक्ति/घटना/विषय का पहला ज़िक्र उसी विषय की मुख्य स्टोरी से लिंक करें। एंकर टेक्स्ट साफ़ हो — 'यहाँ क्लिक करें' या 'और पढ़ें' नहीं।"
+  },
+  "featured-image": {
+    title: "फीचर इमेज 1200px+ और ऑप्टिमाइज़्ड हो",
+    summary: "कम से कम 1200px चौड़ी, ~200KB से कम, WebP, 16:9।",
+    what: "फीचर इमेज लंबी तरफ़ कम से कम 1200px हो, हो सके तो WebP में, फ़ाइल ~200KB से कम, और 16:9 या 1.91:1 अनुपात में।",
+    why: "1200px से छोटी इमेज स्टोरी को Google Discover की इमेज जगह से पूरी तरह बाहर कर देती है। भारी फ़ाइल LCP बढ़ाती है, जिसे Google रैंकिंग में सबसे ज़्यादा देखता है।",
+    how: "अपलोड से पहले रिसाइज़ करें — सिर्फ़ WordPress के रिस्पॉन्सिव साइज़ पर भरोसा न करें। भारी इमेज को कम्प्रेस करें। रेटिना-2x स्क्रीनशॉट बिना रिसाइज़ न लगाएँ।"
+  },
+  "image-quality": {
+    title: "धुँधली, कम क्वालिटी या घिसी-पिटी स्टॉक इमेज न हो",
+    summary: "सभी इमेज साफ़, हो सके तो ओरिजिनल, और स्टोरी से जुड़ी हों।",
+    what: "स्टोरी के अंदर की इमेज साफ़ हों, कम रेज़ोल्यूशन से खींची हुई न हों, और जिस पैराग्राफ के पास हैं उससे जुड़ी हों। जहाँ ओरिजिनल इमेज मिल सके वहाँ घिसी-पिटी स्टॉक फोटो न लगाएँ।",
+    why: "अब Google अपने विज़न मॉडल से इमेज क्वालिटी भी पढ़ता है। धुँधली या विषय से अलग इमेज कमज़ोर कंटेंट का संकेत है और रैंकिंग गिराती है।",
+    how: "अगर सिर्फ़ ख़राब इमेज ही उपलब्ध है तो कम इमेज लगाएँ, ख़राब नहीं। हर इमेज पर ऐसा कैप्शन दें जो alt टेक्स्ट से अलग संदर्भ जोड़े।"
+  },
+  "embeds": {
+    title: "रिच एम्बेड — हर स्टोरी में 1 से 3 का लक्ष्य",
+    summary: "जहाँ ज़रूरी हो वहाँ एक या ज़्यादा वीडियो / ट्वीट / इंस्टाग्राम / चार्ट एम्बेड।",
+    what: "स्टोरी में 1 से 3 रिच एम्बेड हों — ट्वीट, यूट्यूब/नेटिव वीडियो, इंस्टाग्राम, चार्ट या कोट ब्लॉक। <strong>हर स्टोरी में 1 से 3 एम्बेड का लक्ष्य।</strong> जहाँ स्टोरी माँगे वहाँ कम से कम एक; बड़ी स्टोरी में दो-तीन बेहतर। यह सुझाव वाली जाँच है, रोक नहीं।",
+    why: "रिच एम्बेड पाठक का समय बढ़ाते हैं, Google को और संकेत देते हैं, वीडियो रिच रिज़ल्ट के योग्य बनाते हैं और सोशल शेयर बढ़ाते हैं। प्रासंगिक एम्बेड वाली स्टोरी पर औसत सेशन लंबा होता है।",
+    how: "एम्बेड को नेटिव लगाएँ (Gutenberg में URL अलग लाइन में पेस्ट करें), iframe नहीं। नेटिव एम्बेड धीरे लोड होते हैं और रेंडर नहीं रोकते। ब्रेकिंग में सोर्स ट्वीट और एक वीडियो क्लिप अच्छा डिफ़ॉल्ट है।"
+  },
+  "cluster-coverage": {
+    title: "क्लस्टर कवरेज — ट्रेंडिंग एंगल कवर हो",
+    summary: "स्टोरी किसी सक्रिय टॉपिक क्लस्टर में फ़िट हो; ट्रेंडिंग सब-एंगल सुझाए जाएँ।",
+    what: "स्टोरी साइट के किसी सक्रिय टॉपिक क्लस्टर से जुड़ी हो, और सिस्टम 2–3 ऐसे ट्रेंडिंग सब-एंगल दिखाए जो डेस्क ने अभी कवर नहीं किए। लेखक पुष्टि करे कि चुना गया एंगल क्लस्टर में नया है (किसी सहयोगी स्टोरी की नक़ल नहीं)।",
+    why: "क्लस्टर कवरेज से ही Top Stories जीती जाती है। Google उन साइटों को ऊपर रखता है जो किसी विषय को कई एंगल से लगातार कवर करती हैं। ट्रेंडिंग सब-एंगल चूकना न्यूज़ SEO में सबसे बड़ा बचाव-योग्य ट्रैफ़िक नुक़सान है।",
+    how: "नीचे सुझाए ट्रेंडिंग एंगल देखें। कोई एंगल मौजूदा से ज़्यादा प्रासंगिक हो तो हेडलाइन और इंट्रो उसी पर मोड़ें। मौजूदा एंगल सही हो तो सुझावों को डेस्क की अगली स्टोरी के लिए नोट करें।"
+  },
+  "competition-gap": {
+    title: "कॉम्पिटिशन गैप — जो प्रतिद्वंद्वी ने कवर किया, हमने नहीं",
+    summary: "पिछले 24 घंटे में इस विषय पर प्रतिद्वंद्वी साइटों की टॉप स्टोरीज़ दिखाता है।",
+    what: "उसी क्षेत्र की प्रतिद्वंद्वी साइटों का स्कैन ऐसी अच्छी रैंक करती स्टोरीज़ दिखाता है जो हमने अभी कवर नहीं कीं। लेखक देखे कि उनमें से कोई अलग स्टोरी बनानी चाहिए या इसी में जोड़नी चाहिए।",
+    why: "जो साइट प्रतिद्वंद्वियों जितना (और अपने ओरिजिनल एंगल भी) कवर करती है, वही न्यूज़ विषयों पर पकड़ बनाती है। प्रतिद्वंद्वी जो कवर कर रहे हैं वो चूकना मतलब क्लस्टर और Top Stories दोनों चूकना।",
+    how: "दिखाई गई स्टोरीज़ देखें। सच में चूके एंगल को पब्लिश से पहले एडिटोरियल बैकलॉग में डालें। प्रतिद्वंद्वी कवरेज पर इस स्टोरी को न रोकें, जब तक यह उसी की नक़ल न हो।"
+  },
+  "noindex": {
+    title: "स्टोरी index, follow पर सेट हो",
+    summary: "इस पोस्ट पर ग़लती से noindex / nofollow न हो।",
+    what: "पोस्ट noindex न हो। रोबोट्स मेटा index, follow हो। पोस्ट किसी ऐसी कैटेगरी में न हो जो टेम्पलेट स्तर पर ब्लॉक है।",
+    why: "Yoast/Rank Math का एक ग़लत टॉगल स्टोरी को Google से पूरी तरह हटा देता है। यह पब्लिशिंग की सबसे महँगी छिपी ग़लती है।",
+    how: "विज़िबिलिटी 'Public' हो और SEO प्लगइन का इंडेक्स टॉगल ऑन हो — यह पक्का करें। आम तौर पर noindex वाली कैटेगरी में डाल रहे हों तो ओवरराइड दोबारा जाँचें।"
+  },
+  "publish-date": {
+    title: "पब्लिश और मॉडिफ़ाई तारीख़ सही हो",
+    summary: "datePublished अभी का हो, dateModified एडिट पर अपडेट हो।",
+    what: "datePublished असली पब्लिश समय (IST) हो, पीछे की तारीख़ नहीं। dateModified ऐसा सेट हो कि भविष्य के किसी एडिट पर अपने आप अपडेट हो।",
+    why: "न्यूज़ रैंकिंग समय पर बहुत निर्भर है। पुरानी तारीख़ वाली स्टोरी कभी Top Stories में नहीं जाती। dateModified अटका हो तो Google अपडेट नहीं पहचानता।",
+    how: "पब्लिश तारीख़ हाथ से न बदलें, जब तक यह सच में पुरानी स्टोरी का रीपोस्ट न हो। ब्रेकिंग अपडेट में मॉडिफ़ाई तारीख़ अपने आप चलने दें।"
+  },
+  "category-tags": {
+    title: "कैटेगरी और टैग लगे हों",
+    summary: "एक मुख्य कैटेगरी, 3–8 सही टैग, ज़्यादा टैगिंग नहीं।",
+    what: "पोस्ट एक साफ़ मुख्य कैटेगरी में हो। टैग 3 से 8 के बीच हों, हो सके तो पुरानी टैग सूची से लें, और व्यक्ति/जगह/घटना बताएँ — विशेषण नहीं।",
+    why: "कैटेगरी और टैग ऐसे इंटरनल-लिंक आर्काइव बनाते हैं जिन्हें Google ख़ूब क्रॉल करता है। ज़्यादा टैगिंग इन्हें छोटे-छोटे कमज़ोर पेजों में तोड़ देती है और इंडेक्स ब्लोट बनाती है।",
+    how: "पुराने टैग पहले इस्तेमाल करें। नया टैग सिर्फ़ नई नामित चीज़ के लिए बनाएँ। 'शानदार' या 'ताज़ा' जैसे विशेषण कभी टैग न बनाएँ।"
+  },
+  "duplicate-check": {
+    title: "पुरानी स्टोरीज़ से डुप्लिकेट कंटेंट न हो",
+    summary: "हेडलाइन और इंट्रो किसी पुरानी स्टोरी से बहुत मिलते-जुलते न हों।",
+    what: "पिछले 90 दिनों की स्टोरीज़ से तुलना कर कोई ऐसी स्टोरी पकड़ी जाती है जिसकी हेडलाइन या पहला पैराग्राफ 85% से ज़्यादा मिलता-जुलता हो।",
+    why: "लगभग एक जैसी स्टोरीज़ एक-दूसरे की रैंकिंग खा जाती हैं — कोई नहीं जीतता, दोनों हारती हैं। न्यूज़ में Google दोनों को Top Stories से भी हटा सकता है।",
+    how: "डुप्लिकेट पकड़ा जाए तो तय करें: पुरानी स्टोरी अपडेट करें, या एंगल/हेडलाइन/इंट्रो को काफ़ी बदलकर ही पब्लिश करें।"
+  },
+  "headline-craft": {
+    title: "हेडलाइन छोटी, सही केस में, हुक के साथ हो",
+    summary: "फ़ालतू शब्द नहीं, सब छोटे अक्षर नहीं, मुख्य कीवर्ड आगे, सोशल हुक हो।",
+    what: "हेडलाइन में सबसे ज़रूरी हाई-ट्रैफ़िक कीवर्ड शुरू में/आगे हो। फ़ालतू शब्द न हों — अगर 'दुल्हन बनीं' लिखा है तो साथ में 'रचाया ब्याह' न लिखें। कोई शब्द पूरा छोटे अक्षरों में न हो। साइट की SEO हेडलाइन छोटी और साफ़ हो; सोशल शेयर हेडलाइन में भावनात्मक हुक हो।",
+    why: "फ़ालतू शब्द कीवर्ड को कमज़ोर करते हैं और सर्च में दिखने वाली सीमित जगह बर्बाद करते हैं। पूरे छोटे अक्षर लापरवाह लगते हैं और Discover में ब्रांड को नुक़सान देते हैं। बिना हुक हेडलाइन सोशल पर लगभग नहीं उठती।",
+    how: "हेडलाइन ज़ोर से पढ़ें। जो शब्द किसी बात को दोहराए उसे हटाएँ। केस सही करें। फिर पूछें — WhatsApp फ़ीड में यह दिखे तो क्या मैं टैप करूँगा? नहीं तो हुक तेज़ करें, पर क्लिकबेट न बनाएँ।"
+  },
+  "headline-intro-match": {
+    title: "हेडलाइन का एंगल इंट्रो में सही साबित हो",
+    summary: "हेडलाइन का वादा/एंगल पहले पैराग्राफ में ही पूरा हो।",
+    what: "हेडलाइन जो एंगल या दावा ले, वह इंट्रो पैराग्राफ में ही साबित हो — तीन पैराग्राफ नीचे नहीं। लाइव ब्लॉग में हेडलाइन बीच में बदली हो तो इंट्रो भी उसी हिसाब से दोबारा लिखें।",
+    why: "पाठक (और Google की क्वालिटी सिस्टम) पहली स्क्रीन में ही तय करते हैं कि स्टोरी ने हेडलाइन पूरी की या नहीं। मेल न खाना क्लिकबेट माना जाता है और तेज़ बाउंस-बैक कराता है।",
+    how: "हेडलाइन फ़ाइनल करने के बाद सिर्फ़ इंट्रो दोबारा पढ़ें। हेडलाइन का मुख्य वादा वहाँ साफ़ न हो तो इंट्रो बदलें — हेडलाइन नहीं। लाइव ब्लॉग में इंट्रो दोबारा लिखना ज़रूरी मानें।"
+  },
+  "intro-discipline": {
+    title: "इंट्रो 70–100 शब्द का हो",
+    summary: "पहले पैराग्राफ की लंबाई ऑटो जाँची जाती है; ख़बर से शुरू होना सुझाव है।",
+    what: "ऑटोमैटिक जाँच सिर्फ़ एक मापने योग्य बात देखती है: पहला पैराग्राफ 70 से 100 शब्दों के बीच हो। बाक़ी एडिटोरियल सुझाव है जो सिस्टम जाँच नहीं सकता — इंट्रो असली ख़बर से शुरू हो (निबंध जैसे बैकग्राउंड से नहीं), और ट्रेंडिंग कीवर्ड यहीं हों, ज़रूरत पर ब्रैकेट में अंग्रेज़ी रूप के साथ, जैसे (Budget 2026)।",
+    why: "Google पहले पैराग्राफ को ज़्यादा वज़न देता है और पाठक कुछ सेकंड में तय करता है। शब्द संख्या अपने आप लागू हो सकती है; ख़बर से शुरू होना लेखक का फ़ैसला है।",
+    how: "पहला पैराग्राफ 70–100 शब्द के बीच रखें। अलग से, सबसे बड़ी ख़बर पहली लाइन में रखें और संदर्भ दूसरे-तीसरे पैराग्राफ में ले जाएँ। विषय का पहली बार नाम आते ही ब्रैकेट में अंग्रेज़ी कीवर्ड डालें।"
+  },
+  "paragraph-rhythm": {
+    title: "पैराग्राफ की लंबाई संतुलित हो",
+    summary: "एक-लाइन टुकड़े या बहुत बड़े ब्लॉक नहीं; प्रवाह लेखक का फ़ैसला रहता है।",
+    what: "ऑटोमैटिक जाँच वही दिक़्क़तें पकड़ती है जो माप सकती है: बहुत छोटे एक-लाइन पैराग्राफ और बहुत बड़े ब्लॉक (क़रीब 180 शब्द से ऊपर)। यह नहीं आँकती कि हर पैराग्राफ ऊपर वाले से तार्किक रूप से जुड़ता है या नहीं — वह लेखक का पढ़ना है।",
+    why: "बेतरतीब लंबाई कमज़ोर या भरी हुई कंटेंट का संकेत है और मोबाइल/AMP पर ख़राब दिखती है। लंबाई अपने आप मापी जा सकती है; प्रवाह नहीं।",
+    how: "बॉडी पैराग्राफ क़रीब बराबर बैंड में रखें। जाँच कोई टुकड़ा या बड़ा ब्लॉक पकड़े तो जोड़ें या तोड़ें। अलग से पढ़कर पक्का करें कि हर पैराग्राफ पिछले से जुड़ता है।"
+  },
+  "excerpt-original": {
+    title: "एक्सर्प्ट ओरिजिनल हो, बॉडी से कॉपी नहीं",
+    summary: "2–3 नई लाइनें; जो कीवर्ड हेडलाइन में नहीं आए वो यहाँ; जिज्ञासा जगाए।",
+    what: "एक्सर्प्ट/मेटा डिस्क्रिप्शन 2–3 लाइनों में अलग से लिखा हो — कोई लाइन बॉडी से कॉपी-पेस्ट न हो। जो ज़रूरी कीवर्ड हेडलाइन में नहीं आ सके वो यहाँ कवर हों, और पाठक को आगे पढ़ने की इच्छा हो।",
+    why: "बॉडी की नक़ल वाला मेटा सर्च में आपकी पूरी नियंत्रित कॉपी बर्बाद करता है और Google को ख़ुद बदलने का बहाना देता है। अलग, जिज्ञासा वाला एक्सर्प्ट सर्च और सोशल का क्लिक सीधे बढ़ाता है।",
+    how: "एक्सर्प्ट सबसे आख़िर में लिखें, बॉडी फ़ाइनल होने के बाद, बॉडी छिपाकर। कोई लाइन हूबहू स्टोरी में भी हो तो उसे दोबारा लिखें। पूरा सार न दें — जिज्ञासा खुली छोड़ें।"
+  },
+  "no-copy-paste": {
+    title: "कॉपी-पेस्ट नहीं — अपनी साइट से भी नहीं",
+    summary: "बॉडी ओरिजिनल हो; पुराना मटीरियल रीराइट; बैकग्राउंड सिर्फ़ 1–2 लाइन।",
+    what: "बॉडी का कोई हिस्सा किसी सोर्स से कॉपी-पेस्ट न हो, अपनी पहले पब्लिश हुई स्टोरीज़ से भी नहीं। बैकग्राउंड के लिए पुराना मटीरियल रीराइट करें और ज़्यादा से ज़्यादा 1–2 लाइन रखें, हूबहू नहीं।",
+    why: "अपनी ही नक़ल पुरानी और नई URL के बीच रैंकिंग बाँट देती है, कोई नहीं चलती। बाहरी कॉपी-पेस्ट डुप्लिकेट दबाव और कुछ सोर्स में क़ानूनी ख़तरा बनाता है। ओरिजिनल लिखावट अब सीधा क्वालिटी संकेत है।",
+    how: "पुरानी स्टोरी से बैकग्राउंड चाहिए तो उसे बंद करके 1–2 लाइन अपने शब्दों में याद से लिखें। शक हो तो पब्लिश से पहले डुप्लिकेट स्कैन चलाएँ।"
+  },
+  "translation-quality": {
+    title: "अनुवाद मशीन का नहीं, इंसानी हो",
+    summary: "पूरा Google Translate नहीं; भावानुवाद, हिंदी पाठक के एंगल से।",
+    what: "अंग्रेज़ी रिपोर्ट से स्टोरी बनाते वक़्त उसे पूरा Google Translate में न डालें। अनुवाद भावानुवाद हो, अपने शब्दों में, पूरा सोर्स पढ़कर हिंदी पाठक के एंगल से लिखा हो। हिंदी साइट को सोर्स/रेफ़रेंस लिंक के रूप में न लें।",
+    why: "सीधा मशीन अनुवाद अटपटा पढ़ता है, पठनीयता में फेल होता है, और कमज़ोर मेहनत के रूप में पकड़ा जाता है। स्थानीय पाठक के एंगल से लिखना ही स्टोरी को हर दूसरी साइट की वायर कॉपी से अलग करता है।",
+    how: "लिखने से पहले पूरी अंग्रेज़ी रिपोर्ट पढ़ें। फिर ऐसे लिखें जैसे किसी हिंदी पाठक को समझा रहे हों, लाइन-दर-लाइन अनुवाद नहीं। ओरिजिनल/प्राथमिक सोर्स को क्रेडिट दें, हिंदी एग्रीगेटर को नहीं।"
+  },
+  "claims-verified": {
+    title: "संवेदनशील विषयों में बिना पुष्टि दावा या अंधविश्वास नहीं",
+    summary: "हेल्थ/धर्म/लाइफ़स्टाइल के दावे verified हों; अंधविश्वास तथ्य की तरह नहीं।",
+    what: "हेल्थ, धर्म और लाइफ़स्टाइल स्टोरीज़ में कोई बिना पुष्टि दावा या अंधविश्वास तथ्य की तरह न हो। कोई हेल्थ/उपाय का दावा किसी विश्वसनीय अथॉरिटी के हवाले से हो, अख़बार की अपनी आवाज़ में नहीं।",
+    why: "ये YMYL (Your Money or Your Life) श्रेणियाँ हैं जहाँ Google सबसे सख़्त जाँच करता है। यहाँ बिना पुष्टि दावे पूरी श्रेणी की रैंकिंग दबा सकते हैं और असली नुक़सान व क़ानूनी ख़तरा बना सकते हैं।",
+    how: "हर तथ्य/हेल्थ दावे पर पूछें — 'यह किसने कहा, क्या मैं लिंक दे सकता हूँ?'। विश्वसनीय सोर्स न हो तो या तो हटाएँ या साफ़ तौर पर मान्यता/दावे के रूप में लिखें, तथ्य की तरह नहीं।"
+  },
+  "social-comment-sourcing": {
+    title: "सोशल कमेंट का सोर्सिंग साफ़ हो",
+    summary: "गाली/निजी हमले वाले कमेंट नहीं; 1–2 कमेंट हेडलाइन न बनें; verified हैंडल।",
+    what: "सोशल-पोस्ट आधारित स्टोरी में: एक-दो रैंडम कमेंट को मुख्य हेडलाइन एंगल न बनाएँ। गाली, हल्के या निजी हमले वाले कमेंट न लें। जो कमेंट लें वो verified या असली इन्फ़्लुएंसर हैंडल से हो।",
+    why: "कुछ बिना पुष्टि कमेंट पर हेडलाइन बनाना कमज़ोर, कम भरोसे वाली स्टोरी देता है जो जल्दी पुरानी पड़ती है और शिकायतें लाती है। गाली/फ़र्ज़ी हैंडल के कमेंट साख गिराते हैं और उत्पीड़न बढ़ाते हैं।",
+    how: "स्टोरी सोशल रिएक्शन पर टिकी हो तो हेडलाइन व्यापक प्रतिक्रिया दिखाए, एक कमेंट नहीं। सिर्फ़ verified हैंडल का स्क्रीनशॉट लें। गाली/निजी कुछ भी पूरी तरह हटाएँ।"
+  },
+  "photo-selection": {
+    title: "फोटो ताज़ा, प्रासंगिक और कॉपीराइट-साफ़ हो",
+    summary: "लेटेस्ट फोटो, स्टोरी से जुड़ी (सिंबॉलिक नहीं), हर स्टोरी में अलग, राइट्स साफ़।",
+    what: "इमेज लेटेस्ट हो (फ़ाइल फोटो सिर्फ़ तब जब और कोई विकल्प न हो)। यह स्टोरी से दृश्य रूप से जुड़ी हो — आम बिल्डिंग, लोगो या सिंबॉलिक इमेज नहीं। एक ही विषय की कई स्टोरीज़ हों तो हर में अलग फोटो। कॉपीराइट साफ़ हो; किसी की exclusive फोटो सोशल से न उठाएँ; सेलिब्रिटी की सोशल फोटो हो तो हैंडल क्रेडिट में हो।",
+    why: "फीचर इमेज Google Discover प्लेसमेंट और सोशल क्लिक को लगभग हर चीज़ से ज़्यादा चलाती है। सिंबॉलिक या दोहराई इमेज क्लिक मार देती है, और exclusive/सोशल इमेज उठाना कॉपीराइट ख़तरा है।",
+    how: "देर लगे तो भी ताज़ा, विषय से जुड़ी इमेज चुनें। विषय की फोटो दोबारा लें तो इस स्टोरी के लिए बदलें। किसी सोशल/सेलिब्रिटी इमेज पर पब्लिश से पहले हैंडल क्रेडिट में डालें।"
+  },
+  "image-filename-caption": {
+    title: "इमेज का फ़ाइल नाम और कैप्शन सही हो",
+    summary: "वर्णन वाला फ़ाइल नाम (1.jpg नहीं); कैप्शन = कीवर्ड → वर्णन → सोर्स; alt+कैप्शन दोनों।",
+    what: "इमेज फ़ाइल का नाम स्टोरी/व्यक्ति/घटना पर हो — 'image.jpg' या '1.jpg' नहीं। कैप्शन इस क्रम में हो: कीवर्ड → फोटो का वर्णन → सोर्स। कैप्शन और alt टेक्स्ट दोनों CMS में भरे हों, और कैप्शन को alt में कॉपी-पेस्ट न किया हो।",
+    why: "वर्णन वाला फ़ाइल नाम इमेज-सर्च रैंकिंग का असली कारक है। तय क्रम का कैप्शन पाठक और Google दोनों को संदर्भ देता है। कैप्शन को alt में दोहराना alt का अलग संकेत बर्बाद करता है।",
+    how: "अपलोड से पहले फ़ाइल का नाम बदलें। कैप्शन कीवर्ड-पहले, फिर वर्णन, फिर सोर्स लिखें। alt अलग से लिखें — किसी न देख पाने वाले के लिए इमेज का वर्णन।"
+  },
+  "embed-placement": {
+    title: "एम्बेड सही जगह और सही ढंग से लगे हों",
+    summary: "वीडियो तीसरे पैराग्राफ से पहले नहीं, ऊपर H2 सबहेड; ट्वीट तभी जब वैल्यू हो।",
+    what: "कोई वीडियो एम्बेड तीसरे पैराग्राफ से पहले न हो और उसके ऊपर H2 फ़ॉर्मेट का सबहेड हो। ट्वीट तभी एम्बेड हो जब उसमें असली ऑडियो/वीडियो/फोटो वैल्यू हो; विवादित ट्वीट लाइव एम्बेड नहीं, स्क्रीनशॉट हो।",
+    why: "तीसरे पैराग्राफ से ऊपर एम्बेड ख़बर नीचे धकेलता है और LCP व पठन-प्रवाह बिगाड़ता है। लाइव एम्बेड किया विवादित ट्वीट कभी भी डिलीट हो सकता है, स्टोरी में ख़ाली जगह छूट जाती है — स्क्रीनशॉट स्थायी और सुरक्षित है।",
+    how: "कोई जल्दी आया एम्बेड तीसरे पैराग्राफ से नीचे करें और ऊपर H2 सबहेड दें। ट्वीट एम्बेड से पहले पूछें कि मीडिया वैल्यू है या नहीं; सिर्फ़ टेक्स्ट या विवादित हो तो स्क्रीनशॉट लें।"
+  },
+  "credit-attribution": {
+    title: "बायलाइन और क्रेडिट फ़ील्ड भरे हों",
+    summary: "ऑटो जाँचता है कि बायलाइन + क्रेडिट फ़ील्ड मौजूद हैं; सहीपन एडिटोरियल रहता है।",
+    what: "ऑटोमैटिक जाँच बुनियादी ढाँचा देखती है: असली बायलाइन हो ('Admin'/'Editorial Desk' नहीं) और जहाँ एजेंसी-इनपुट फ़्लैग सेट हो वहाँ एजेंसी-क्रेडिट फ़ील्ड ख़ाली न हो। क्रेडिट सच में सही और पूरा है या नहीं — सही एजेंसी, सभी रिपोर्टर, किसने क्या किया — यह एडिटोरियल फ़ैसला है जो सिस्टम जाँच नहीं सकता।",
+    why: "बायलाइन न होना या क्रेडिट फ़ील्ड ख़ाली होना मापने योग्य और आम चूक है, प्लेजरिज़्म और क़ानूनी ख़तरे के साथ। टूल फ़ील्ड भरे होने की गारंटी दे सकता है, सही होने की नहीं।",
+    how: "पब्लिश से पहले बायलाइन और ज़रूरी क्रेडिट फ़ील्ड भरें। अलग से पक्का करें कि एजेंसी/exclusive क्रेडिट सही है और हर योगदान देने वाले रिपोर्टर का नाम है।"
+  },
+  "preview-readthrough": {
+    title: "प्रीव्यू में पूरी कॉपी एक बार पढ़ी हो",
+    summary: "पूरी स्टोरी एक बार पढ़ी; स्पेलिंग/ग्रामर जाँची; भरने वाली लाइनें नहीं।",
+    what: "पूरी स्टोरी प्रीव्यू में एक बार पढ़ी गई हो — सरसरी नहीं। स्पेलिंग और ग्रामर जाँची हो। सिर्फ़ शब्द संख्या पूरी करने के लिए कोई लाइन न जोड़ी हो। एक ही बात दो बार न लिखी हो।",
+    why: "प्रीव्यू पठन अंतिम बचाव है उन ग़लतियों से जो ऑटोमैटिक जाँच नहीं पकड़ती — अटपटी भाषा, तथ्य चूक, भराव, ग़लती से दोहराव। ये सीधे पाठक के भरोसे और क्वालिटी स्कोर पर असर डालते हैं।",
+    how: "लेखक की तरह नहीं, पाठक की तरह पढ़ें। जो लाइन नई जानकारी न दे उसे हटाएँ। बात दोहराई हो तो मज़बूत वाली रखें। आगे बढ़ने से पहले हर स्पेलिंग/ग्रामर ग़लती ठीक करें।"
+  },
+  "preview-no-repeat": {
+    title: "बॉडी, एक्सर्प्ट, मेटा में कोई लाइन न दोहराई हो",
+    summary: "एक ही लाइन बॉडी और एक्सर्प्ट/मेटा डिस्क्रिप्शन में न आए।",
+    what: "कोई एक जैसी लाइन एक से ज़्यादा जगह न आए — बॉडी, एक्सर्प्ट और मेटा डिस्क्रिप्शन में एक ही वाक्य न हो।",
+    why: "इन फ़ील्ड्स में दोहराव अलग रैंकिंग और क्लिक संकेत बर्बाद करता है और कमज़ोर मेहनत दिखाता है। एक्सर्प्ट/मेटा का काम वही जानकारी देना है जो बॉडी सर्च में नहीं दिखा सकती।",
+    how: "एक्सर्प्ट/मेटा को ख़ास तौर पर इंट्रो से मिलाकर देखें — ग़लती से दोहराव यहीं होता है। कोई साझा लाइन हो तो दोबारा लिखें ताकि हर फ़ील्ड अपना काम करे।"
+  },
+  "preview-everything-works": {
+    title: "प्रीव्यू में सभी एम्बेड, इमेज, लिंक काम करें",
+    summary: "हर एम्बेड दिखे, हर इमेज लोड हो, हर लिंक सही जगह खुले।",
+    what: "प्रीव्यू में हर एम्बेड रेंडर हो, हर इमेज लोड हो, और हर इंटरनल/बाहरी लिंक सही जगह खुले। URL एक बार और जाँचें कि कोई ग़लत या जंक कैरेक्टर न हो।",
+    why: "पब्लिश के बाद टूटा एम्बेड या डेड लिंक सबसे ख़राब समय पर — जब ट्रैफ़िक सबसे ज़्यादा हो — पाठक अनुभव बिगाड़ता है, और टूटा लिंक इंटरनल-लिंकिंग की पूरी SEO वैल्यू बर्बाद करता है।",
+    how: "प्रीव्यू में हर लिंक क्लिक करें। हर एम्बेड सच में दिखे (सिर्फ़ ख़ाली जगह नहीं) यह पक्का करें। URL को अक्षर-दर-अक्षर दोबारा जाँचें। तभी पब्लिश करें।"
+  },
+  "author-byline": {
+    title: "लेखक तय हो और उसकी प्रोफ़ाइल पूरी हो",
+    summary: "बायलाइन सेट हो; लेखक पेज पर बायो, फोटो, क्रेडेंशियल हों।",
+    what: "पोस्ट पर असली लेखक बायलाइन हो ('Admin' या 'Editorial Desk' नहीं)। लेखक की प्रोफ़ाइल पेज मौजूद हो, 50+ शब्द का बायो, फोटो, और प्रोफ़ेशनल क्रेडेंशियल/सोशल लिंक हों।",
+    why: "E-E-A-T (अनुभव, विशेषज्ञता, अधिकार, भरोसा) सीधे लेखक प्रोफ़ाइल से पढ़ा जाता है। बिना पहचाने लेखक वाली न्यूज़ स्टोरी व्यवस्थित रूप से नीचे रहती है, ख़ासकर YMYL में।",
+    how: "डेस्क बायलाइन से पब्लिश हो रहा हो तो उस डेस्क प्रोफ़ाइल पर एडिटोरियल स्टैंडर्ड दिए हों यह पक्का करें। नए लेखक की प्रोफ़ाइल पहली पब्लिश से पहले पूरी करें, बाद में नहीं।"
+  },
+  "sources-citations": {
+    title: "सोर्स का हवाला और लिंक हो",
+    summary: "तथ्य, आँकड़े और कोट्स प्राथमिक सोर्स से लिंक हों।",
+    what: "आँकड़े, कोट्स और तथ्य या तो अपने प्राथमिक सोर्स (सरकारी रिलीज़, आधिकारिक बयान, ओरिजिनल रिपोर्ट) से लिंक हों, या टेक्स्ट में हवाला हो ('...के मुताबिक़')।",
+    why: "सोर्सिंग सीधा E-E-A-T संकेत है। न्यूज़ में बिना सोर्स दावे साइट को ग़लत-सूचना फ़्लैग में डालते हैं और Google के क्वालिटी रेटर का भरोसा घटाते हैं।",
+    how: "किसी आँकड़े का पहली बार ज़िक्र होते ही लिंक दें। प्राथमिक सोर्स (असली रिलीज़) को एग्रीगेटर (उसे कोट करती दूसरी साइट) से ज़्यादा प्राथमिकता दें।"
+  }
+};
+
+let currentLang = 'hi';
+
+const sectionsEl = document.getElementById('sections');
+const state = {};
+
+checklist.forEach((section, sIdx) => {
+  const sectionDiv = document.createElement('div');
+  sectionDiv.className = 'section';
+
+  const total = section.items.length;
+  const criticalCount = section.items.filter(i => i.critical).length;
+
+  sectionDiv.innerHTML = `
+    <div class="section-header">
+      <span class="section-num">${String(sIdx + 1).padStart(2,'0')}</span>
+      <span class="section-title" data-en="${section.section}" data-hi="${SECTION_HI[section.section] || section.section}">${SECTION_HI[section.section] || section.section}</span>
+      <span class="section-meta"><span class="section-progress" data-section="${sIdx}">0</span> / ${total} · ${criticalCount} <span class="t-crit">${UI.hi.progressCrit}</span></span>
+    </div>
+    <div class="section-items"></div>
+  `;
+
+  const itemsContainer = sectionDiv.querySelector('.section-items');
+
+  section.items.forEach((item) => {
+    state[item.id] = {
+      passed: false,
+      type: item.type,
+      critical: item.critical,
+      running: item.type === 'auto',
+      autoResult: item.autoResult || null
+    };
+
+    const hi = HI[item.id] || {};
+    const t = {
+      title_en: item.title, title_hi: hi.title || item.title,
+      sum_en: item.summary, sum_hi: hi.summary || item.summary,
+      what_en: item.what, what_hi: hi.what || item.what,
+      why_en: item.why, why_hi: hi.why || item.why,
+      how_en: item.how, how_hi: hi.how || item.how
+    };
+
+    const itemEl = document.createElement('div');
+    itemEl.className = 'item';
+    itemEl.dataset.id = item.id;
+
+    const resultBox = item.type === 'auto'
+      ? `<div class="result-box ${item.autoResult.pass ? 'pass' : 'fail'}" id="result-${item.id}" style="display:none">${item.autoResult.message}</div>`
+      : '';
+
+    itemEl.innerHTML = `
+      <div class="item-row">
+        <div class="indicator ${item.type === 'manual' ? 'manual' : 'running'}" data-indicator="${item.id}"></div>
+        <div class="item-main">
+          <div class="item-title" data-en="${t.title_en.replace(/"/g,'&quot;')}" data-hi="${t.title_hi.replace(/"/g,'&quot;')}">${t.title_hi}</div>
+          <div class="item-summary" data-en="${t.sum_en.replace(/"/g,'&quot;')}" data-hi="${t.sum_hi.replace(/"/g,'&quot;')}">${t.sum_hi}</div>
+        </div>
+        <div class="item-status">
+          ${item.critical ? `<span class="pill critical t-critical">${UI.hi.critical}</span>` : ''}
+          ${item.type === 'manual'
+            ? `<span class="pill manual t-manual">${UI.hi.manual}</span>`
+            : `<span class="pill result-running" data-pill="${item.id}">${UI.hi.running}</span>`}
+          <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 4 L10 8 L6 12" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="detail">
+        <div class="detail-inner">
+          ${item.type === 'auto' ? `
+          <div class="detail-block">
+            <div class="detail-label t-lbl-result">${UI.hi.lblResult}</div>
+            <div class="detail-text">${resultBox}</div>
+          </div>` : ''}
+          <div class="detail-block">
+            <div class="detail-label t-lbl-what">${UI.hi.lblWhat}</div>
+            <div class="detail-text" data-en="${t.what_en.replace(/"/g,'&quot;')}" data-hi="${t.what_hi.replace(/"/g,'&quot;')}">${t.what_hi}</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label t-lbl-why">${UI.hi.lblWhy}</div>
+            <div class="detail-text" data-en="${t.why_en.replace(/"/g,'&quot;')}" data-hi="${t.why_hi.replace(/"/g,'&quot;')}">${t.why_hi}</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label t-lbl-how">${UI.hi.lblHow}</div>
+            <div class="detail-text" data-en="${t.how_en.replace(/"/g,'&quot;')}" data-hi="${t.how_hi.replace(/"/g,'&quot;')}">${t.how_hi}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    itemsContainer.appendChild(itemEl);
+
+    itemEl.querySelector('.item-row').addEventListener('click', (e) => {
+      if (e.target.closest('.indicator.manual')) return;
+      itemEl.classList.toggle('open');
+    });
+
+    const indicator = itemEl.querySelector('.indicator');
+    if (item.type === 'manual') {
+      indicator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state[item.id].passed = !state[item.id].passed;
+        indicator.classList.toggle('checked', state[item.id].passed);
+        updateScore();
+      });
+    }
+  });
+
+  sectionsEl.appendChild(sectionDiv);
+});
+
+let lastStatus = { key: 'running', n: 0 };
+let lastAutorun = { key: 'running', p: 0, n: 0, f: 0 };
+
+function L() { return UI[currentLang]; }
+
+function renderAutorunStatus() {
+  const el = document.getElementById('autorun-status');
+  const s = lastAutorun;
+  if (s.key === 'running') el.textContent = L().autorunRunning;
+  else if (s.key === 'allpass') el.textContent = L().autorunAllPass(s.n);
+  else el.textContent = L().autorunSome(s.p, s.n, s.f);
+}
+
+function renderFooterStatus() {
+  const el = document.getElementById('status-text');
+  const s = lastStatus;
+  if (s.key === 'running') el.textContent = L().stRunning;
+  else if (s.key === 'blocked') el.textContent = L().stBlocked(s.n);
+  else if (s.key === 'remaining') el.textContent = L().stRemaining(s.n);
+  else if (s.key === 'optional') el.textContent = L().stOptional(s.n);
+  else if (s.key === 'ready') el.textContent = L().stReady;
+}
+
+function runAutoChecks() {
+  const autoItems = Object.entries(state).filter(([_, s]) => s.type === 'auto');
+
+  autoItems.forEach(([id, s]) => {
+    s.running = true;
+    s.passed = false;
+    const indicator = document.querySelector(`[data-indicator="${id}"]`);
+    const pill = document.querySelector(`[data-pill="${id}"]`);
+    const resultBox = document.getElementById(`result-${id}`);
+    indicator.className = 'indicator running';
+    if (pill) {
+      pill.className = 'pill result-running';
+      pill.dataset.state = 'running';
+      pill.textContent = L().running;
+    }
+    if (resultBox) resultBox.style.display = 'none';
+  });
+
+  lastAutorun = { key: 'running', p: 0, n: autoItems.length, f: 0 };
+  renderAutorunStatus();
+  updateScore();
+
+  autoItems.forEach(([id, s], idx) => {
+    setTimeout(() => {
+      const result = s.autoResult;
+      s.running = false;
+      s.passed = result.pass;
+
+      const indicator = document.querySelector(`[data-indicator="${id}"]`);
+      const pill = document.querySelector(`[data-pill="${id}"]`);
+      const resultBox = document.getElementById(`result-${id}`);
+
+      indicator.className = `indicator ${result.pass ? 'passed' : 'failed'}`;
+      if (pill) {
+        pill.className = `pill ${result.pass ? 'result-pass' : 'result-fail'}`;
+        pill.dataset.state = result.pass ? 'passed' : 'failed';
+        pill.textContent = result.pass ? L().passed : L().failed;
+      }
+      if (resultBox) resultBox.style.display = 'block';
+
+      updateScore();
+
+      if (idx === autoItems.length - 1) {
+        setTimeout(() => {
+          const failedCount = autoItems.filter(([, st]) => !st.passed).length;
+          lastAutorun = failedCount === 0
+            ? { key: 'allpass', p: autoItems.length, n: autoItems.length, f: 0 }
+            : { key: 'some', p: autoItems.length - failedCount, n: autoItems.length, f: failedCount };
+          renderAutorunStatus();
+        }, 150);
+      }
+    }, 300 + idx * 110);
+  });
+}
+
+const totalItems = Object.keys(state).length;
+const totalCritical = Object.values(state).filter(s => s.critical).length;
+document.getElementById('score-total').textContent = totalItems;
+
+function updateScore() {
+  const passedCount = Object.values(state).filter(s => s.passed).length;
+  const criticalPassed = Object.values(state).filter(s => s.passed && s.critical).length;
+  const anyRunning = Object.values(state).some(s => s.running);
+  const allCriticalDone = criticalPassed === totalCritical;
+  const criticalAutoFailing = Object.values(state).some(s => s.critical && s.type === 'auto' && !s.running && !s.passed);
+
+  document.getElementById('score-num').textContent = passedCount;
+  document.getElementById('score-bar').style.width = `${(passedCount / totalItems) * 100}%`;
+
+  checklist.forEach((section, sIdx) => {
+    const done = section.items.filter(i => state[i.id].passed).length;
+    const progEl = document.querySelector(`.section-progress[data-section="${sIdx}"]`);
+    if (progEl) progEl.textContent = done;
+  });
+
+  const footerStatus = document.getElementById('footer-status');
+  const publishBtn = document.getElementById('btn-publish');
+
+  footerStatus.classList.remove('ready', 'blocked');
+
+  if (anyRunning) {
+    lastStatus = { key: 'running', n: 0 };
+    publishBtn.classList.add('disabled');
+  } else if (criticalAutoFailing) {
+    footerStatus.classList.add('blocked');
+    const failedCritical = Object.values(state).filter(s => s.critical && !s.passed).length;
+    lastStatus = { key: 'blocked', n: failedCritical };
+    publishBtn.classList.add('disabled');
+  } else if (!allCriticalDone) {
+    lastStatus = { key: 'remaining', n: totalCritical - criticalPassed };
+    publishBtn.classList.add('disabled');
+  } else if (passedCount < totalItems) {
+    footerStatus.classList.add('ready');
+    lastStatus = { key: 'optional', n: totalItems - passedCount };
+    publishBtn.classList.remove('disabled');
+  } else {
+    footerStatus.classList.add('ready');
+    lastStatus = { key: 'ready', n: 0 };
+    publishBtn.classList.remove('disabled');
+  }
+  renderFooterStatus();
+}
+
+/* ---------- Language switch ---------- */
+function applyLanguage(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  // toggle buttons
+  document.getElementById('lang-hi').classList.toggle('active', lang === 'hi');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+
+  // static UI strings with data-i18n
+  const dict = UI[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+
+  // section titles + item text (data-en / data-hi)
+  document.querySelectorAll('[data-en][data-hi]').forEach(el => {
+    el.innerHTML = el.getAttribute(lang === 'hi' ? 'data-hi' : 'data-en');
+  });
+
+  // detail block labels
+  document.querySelectorAll('.t-lbl-result').forEach(e => e.textContent = dict.lblResult);
+  document.querySelectorAll('.t-lbl-what').forEach(e => e.textContent = dict.lblWhat);
+  document.querySelectorAll('.t-lbl-why').forEach(e => e.textContent = dict.lblWhy);
+  document.querySelectorAll('.t-lbl-how').forEach(e => e.textContent = dict.lblHow);
+
+  // pills
+  document.querySelectorAll('.t-critical').forEach(e => e.textContent = dict.critical);
+  document.querySelectorAll('.t-manual').forEach(e => e.textContent = dict.manual);
+  document.querySelectorAll('.t-crit').forEach(e => e.textContent = dict.progressCrit);
+
+  // auto-check result pills reflect current state
+  document.querySelectorAll('[data-pill]').forEach(p => {
+    const st = p.dataset.state || 'running';
+    p.textContent = st === 'passed' ? dict.passed : st === 'failed' ? dict.failed : dict.running;
+  });
+
+  // dynamic status lines
+  renderAutorunStatus();
+  renderFooterStatus();
+
+  // CTA buttons if in a transient state, keep; else reset label
+  const pub = document.getElementById('btn-publish');
+  if (!pub.dataset.locked) {
+    pub.innerHTML = `<span class="btn-publish-arrow">↑</span><span data-i18n="publish">${dict.publish}</span>`;
+  }
+}
+
+document.getElementById('lang-hi').addEventListener('click', () => applyLanguage('hi'));
+document.getElementById('lang-en').addEventListener('click', () => applyLanguage('en'));
+
+setTimeout(runAutoChecks, 400);
+document.getElementById('rerun-btn').addEventListener('click', runAutoChecks);
+
+document.getElementById('btn-publish').addEventListener('click', () => {
+  const btn = document.getElementById('btn-publish');
+  if (btn.classList.contains('disabled')) return;
+  btn.dataset.locked = '1';
+  btn.innerHTML = L().publishing;
+  setTimeout(() => {
+    btn.innerHTML = L().published;
+    btn.style.background = '#1f6f3e';
+    btn.style.borderColor = '#1f6f3e';
+  }, 700);
+});
+
+document.getElementById('btn-save').addEventListener('click', () => {
+  const btn = document.getElementById('btn-save');
+  btn.textContent = L().draftSaved;
+  setTimeout(() => { btn.textContent = L().savedraft; }, 1500);
+});
+
+// initialise in Hindi
+applyLanguage('hi');
+</script>
+
+</body>
+</html>
